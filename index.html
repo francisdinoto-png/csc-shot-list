@@ -1646,8 +1646,12 @@ function render(){
     hdr.appendChild(tc);
     if(day.locked){const lb=S('locked-badge','pinned');hdr.appendChild(lb);}
     const dp=D('day-prog');
-    const cnt=S('day-count',`${done} / ${total}`);cnt.style.color=all?'#4ADE80':'rgba(255,255,255,.45)';dp.appendChild(cnt);
-    const pb=D('pbar');const pf=D('pfill');pf.style.width=pct+'%';pf.style.background=all?'#4ADE80':'#E8460A';
+    const cnt=S('day-count',`${done} / ${total}`);
+    cnt.id='day-cnt-'+day.id;
+    cnt.style.color=all?'#4ADE80':'rgba(255,255,255,.45)';dp.appendChild(cnt);
+    const pb=D('pbar');const pf=D('pfill');
+    pf.id='day-pf-'+day.id;
+    pf.style.width=pct+'%';pf.style.background=all?'#4ADE80':'#E8460A';
     pb.appendChild(pf);dp.appendChild(pb);hdr.appendChild(dp);
     // Edit button (all days get it; locked special days get rename only)
     const editBtn=B('day-edit-btn'+(editingDayId===day.id?' active':''),'✎');
@@ -1716,6 +1720,7 @@ function render(){
       mo.shots.forEach((shot,si)=>{
         const fns=buildFn(day.num,shot.type,shot.text,shot.fmt,shot.customFn,shot.fnSlug,shot.customFns);
         const row=D('shot'+(shot.essential===false?' shot-sug':''));
+        row.id='row-'+shot.id;
         row.draggable=false;
         row.dataset.shotId=shot.id;row.dataset.momentId=mo.id;row.dataset.dayId=day.id;
 
@@ -1747,7 +1752,28 @@ function render(){
         row.appendChild(handle);
 
         const cb=B('s-check'+(shot.done?' done':''),shot.done?'✓':'');
-        cb.onclick=()=>{shot.done=!shot.done;render();};
+        cb.onclick=()=>{
+          shot.done=!shot.done;
+          // Surgical update — no full re-render, no flicker
+          cb.className='s-check'+(shot.done?' done':'');
+          cb.textContent=shot.done?'✓':'';
+          st.className='s-text'+(shot.done?' done':'')+(isSug?' sug':'');
+          // Show/hide all filename rows for this shot
+          fns.forEach((_,fi)=>{
+            const fe=document.getElementById('fe-'+shot.id+'-'+fi);
+            if(fe)fe.className='s-fn'+(shot.done?' show':'');
+          });
+          // Update day progress bar
+          const total2=day.moments.reduce((a,mo)=>a+mo.shots.length,0);
+          const done2=day.moments.reduce((a,mo)=>a+mo.shots.filter(s=>s.done).length,0);
+          const pct2=total2>0?Math.round(done2/total2*100):0;
+          const all2=pct2===100&&total2>0;
+          const cntEl=document.getElementById('day-cnt-'+day.id);
+          const pfEl=document.getElementById('day-pf-'+day.id);
+          if(cntEl){cntEl.textContent=`${done2} / ${total2}`;cntEl.style.color=all2?'#4ADE80':'rgba(255,255,255,.45)';}
+          if(pfEl){pfEl.style.width=pct2+'%';pfEl.style.background=all2?'#4ADE80':'#E8460A';}
+          saveState();
+        };
         row.appendChild(cb);
 
         const sb=D('s-body');
@@ -1756,12 +1782,25 @@ function render(){
         st.className='s-text'+(shot.done?' done':'')+(isSug?' sug':'');
         st.textContent=shot.text;
         st.contentEditable='false';st.spellcheck=false;
-        st.ondblclick=e=>{
-          e.stopPropagation();
+
+        const openStEdit=()=>{
           st.contentEditable='true';st.focus();
           const r=document.createRange();r.selectNodeContents(st);
           const sel=window.getSelection();sel.removeAllRanges();sel.addRange(r);
         };
+        // Desktop: double-click
+        st.ondblclick=e=>{e.stopPropagation();openStEdit();};
+        // Mobile: long-press (500ms)
+        let _stPress=null;
+        st.addEventListener('touchstart',e=>{
+          _stPress=setTimeout(()=>{
+            e.preventDefault();
+            openStEdit();
+          },500);
+        },{passive:true});
+        st.addEventListener('touchend',()=>clearTimeout(_stPress));
+        st.addEventListener('touchmove',()=>clearTimeout(_stPress));
+
         st.onblur=()=>{
           st.contentEditable='false';
           const v=st.textContent.trim();
@@ -1779,6 +1818,7 @@ function render(){
 
         fns.forEach((fn,fi)=>{
           const fe=D('s-fn'+(shot.done?' show':''));
+          fe.id='fe-'+shot.id+'-'+fi;
           // Wrapper holds either the copy button or the edit input
           const fnWrap=D('fn-wrap');
 
@@ -1786,23 +1826,11 @@ function render(){
             const btn=document.createElement('button');
             btn.className='fn-full'+(shot.done?'':' fn-pending');
             btn.type='button';btn.textContent=fn;
-            btn.title='Tap to copy · Double-tap to rename';
-            let _touchFired=false;
-            btn.addEventListener('touchend',e=>{
-              if(e.cancelable)e.preventDefault();
-              e.stopPropagation();
-              _touchFired=true;
-              copyT(btn.textContent);
-              setTimeout(()=>{_touchFired=false;},400);
-            });
-            btn.onclick=e=>{
-              if(_touchFired)return;
-              e.stopPropagation();
-              copyT(btn.textContent);
-            };
-            btn.ondblclick=e=>{
-              e.stopPropagation();
-              // Swap button for input
+            btn.title='Tap to copy · Hold to rename';
+            let _touchFired=false,_fnPress=null,_longPressed=false;
+
+            const openFnEdit=()=>{
+              _longPressed=true;
               const inp=document.createElement('input');
               inp.type='text';inp.className='fn-edit-inp';
               inp.value=fn;
@@ -1821,6 +1849,36 @@ function render(){
                 if(e2.key==='Enter'){e2.preventDefault();inp.blur();}
                 if(e2.key==='Escape'){inp.onblur=null;render();}
               };
+            };
+
+            // Mobile: long-press to edit, short tap to copy
+            btn.addEventListener('touchstart',e=>{
+              _longPressed=false;
+              _fnPress=setTimeout(()=>{
+                e.preventDefault();
+                openFnEdit();
+              },500);
+            },{passive:true});
+            btn.addEventListener('touchend',e=>{
+              clearTimeout(_fnPress);
+              if(_longPressed)return; // was a long press — don't copy
+              if(e.cancelable)e.preventDefault();
+              e.stopPropagation();
+              _touchFired=true;
+              copyT(btn.textContent);
+              setTimeout(()=>{_touchFired=false;},400);
+            });
+            btn.addEventListener('touchmove',()=>clearTimeout(_fnPress));
+
+            // Desktop: click to copy, double-click to edit
+            btn.onclick=e=>{
+              if(_touchFired)return;
+              e.stopPropagation();
+              copyT(btn.textContent);
+            };
+            btn.ondblclick=e=>{
+              e.stopPropagation();
+              openFnEdit();
             };
             return btn;
           };
@@ -2637,10 +2695,16 @@ function _getSnapshot(){
     _clientId,_ts:Date.now()};
 }
 
+let _suppressUntil = 0; // suppress SSE re-renders briefly after our own writes
+
 function saveState(){
   clearTimeout(_fbSaveTimer);_setSyncDot('saving');
+  const ts=Date.now();
+  _lastSeenTs=ts; // stamp immediately so SSE echo of this write is ignored
+  _suppressUntil=ts+2000; // suppress any SSE re-render for 2s after our write
   _fbSaveTimer=setTimeout(()=>{
-    fetch(FB_STATE,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(_getSnapshot())})
+    const snap=_getSnapshot();snap._ts=ts; // use the same ts we already stamped
+    fetch(FB_STATE,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(snap)})
       .then(()=>_setSyncDot('saved')).catch(()=>_setSyncDot(''));
   },400);
 }
@@ -2708,7 +2772,9 @@ function _startSSE(){
   _sseState=new EventSource(FB_BASE+'/shotlist/state.json?stream=true');
   _sseState.addEventListener('put',e=>{
     try{const msg=JSON.parse(e.data);const s=msg.data;
-      if(!s||!_fbReady||s._clientId===_clientId)return;
+      if(!s||!_fbReady)return;
+      if(s._clientId===_clientId)return; // our own write echoed back
+      if(Date.now()<_suppressUntil)return; // suppress window active — skip re-render
       if(s._ts&&s._ts<=_lastSeenTs)return;
       _lastSeenTs=s._ts||0;_applyState(s);toast('Shot list updated ✓',true);
     }catch(err){}
