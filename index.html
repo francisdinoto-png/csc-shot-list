@@ -102,6 +102,7 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #111; color: #EA
 .s-fn { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #2a6a3a; margin-top: 5px; cursor: pointer; display: none; word-break: break-all; line-height: 1.6; transition: color .15s; }
 .s-fn:hover { color: #4ADE80; }
 .s-fn.show { display: block; }
+.shot-ingested { padding: 6px 12px; border-bottom: 1px solid rgba(255,255,255,.04); }
 .s-fn-pending { opacity: 0.45; }
 .fn-full { display: inline; background: none; border: none; border-bottom: 1px dashed #2a6a3a; padding: 0; margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #4ADE80; cursor: pointer; text-align: left; transition: border-color .12s; word-break: break-all; line-height: 1.6; }
 .fn-full.fn-pending { color: #4ADE80; border-bottom-style: dotted; }
@@ -1684,6 +1685,25 @@ function render(){
     }
 
     const body=D('day-body'+(day.open?'':' closed'));
+
+    if(day.ingested){
+      // ── INGESTED: flat locked view — no moment headers, no controls ──
+      const allShots=day.moments.flatMap(mo=>mo.shots.filter(s=>s.fmt!=='IN'));
+      allShots.forEach(shot=>{
+        const fns=buildFn(day.num,shot.type,shot.text,shot.fmt,shot.customFn,shot.fnSlug,shot.customFns);
+        const row=D('shot-ingested');
+        row.appendChild(S('s-text done',shot.text));
+        fns.forEach(fn=>{
+          const fnRow=D('s-fn show');
+          const fnSpan=document.createElement('span');
+          fnSpan.className='fn-full';fnSpan.textContent=fn;
+          fnSpan.style.cursor='default';fnSpan.title='';
+          fnRow.appendChild(fnSpan);row.appendChild(fnRow);
+        });
+        body.appendChild(row);
+      });
+    } else {
+    // ── NORMAL: full interactive render ──
     day.moments.forEach(mo=>{
       const mw=D('moment');
       const mh=D('moment-hdr');
@@ -1758,7 +1778,7 @@ function render(){
         sb.appendChild(st);
 
         fns.forEach((fn,fi)=>{
-          const fe=D('s-fn show'+(shot.done?'':' s-fn-pending'));
+          const fe=D('s-fn'+(shot.done?' show':''));
           // Wrapper holds either the copy button or the edit input
           const fnWrap=D('fn-wrap');
 
@@ -1887,12 +1907,16 @@ function render(){
         rAF(()=>{refPrev();});
       }
       body.appendChild(mw);
-    });
+    }); // end day.moments.forEach
+    } // end else (normal render)
 
+    if(!day.ingested){
     const footer=D('day-footer');
     footer.appendChild(S('footer-stat',done>0?`${done} shot${done!==1?'s':''} completed`:''));
     const eb=B('eod-btn','End of Day →');eb.onclick=()=>openEOD(day.id);footer.appendChild(eb);
-    body.appendChild(footer);card.appendChild(body);wrap.appendChild(card);
+    body.appendChild(footer);
+    }
+    card.appendChild(body);wrap.appendChild(card);
   });
   saveState();
 }
@@ -2116,6 +2140,11 @@ document.getElementById('eod-send-btn').addEventListener('click',async()=>{
   }catch(e){btn.disabled=false;btn.textContent='Send to Sheet →';st.textContent='Could not reach sheet.';}
 });
 
+function _ingestDay(dayId){
+  const d=days.find(d=>d.id===(dayId||eodId));
+  if(d)d.ingested=true;
+}
+
 function _buildPhase2(){
   const container=document.getElementById('eod-phase2-choices');
   container.innerHTML='';
@@ -2133,14 +2162,14 @@ function _buildPhase2(){
 
   // ── Post-Wrap: just close, no flow ──
   if(isPostWrap){
-    addBtn('✓','All Done','Build complete. Close this out.',()=>closeEOD());
+    addBtn('✓','All Done','Build complete. Close this out.',()=>{_ingestDay();closeEOD();});
     return;
   }
 
   // ── Pickup: open Post-Wrap, no carry ──
   if(isPickup){
     addBtn('✓','All Done — Move to Post-Wrap','Wrap it up. Post-Wrap is next.',()=>{
-      closeEOD();
+      _ingestDay();closeEOD();
       const pw=days.find(d=>d.id==='d-postwrap');
       if(pw){pw.open=true;render();}
     });
@@ -2160,7 +2189,7 @@ function _buildPhase2(){
         else{unusedLog.push({dayName,dayNum,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'}),shots:logShots});}
       }
       pendingMiss=[];
-      closeEOD();
+      _ingestDay();closeEOD();
       const pickup=days.find(d=>d.id==='d-pickup');
       if(pickup){pickup.open=true;render();}
     });
@@ -2174,7 +2203,7 @@ function _buildPhase2(){
         if(existing){logShots.forEach(s=>existing.shots.push(s));}
         else{unusedLog.push({dayName,dayNum,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'}),shots:logShots});}
       }
-      pendingMiss=[];closeEOD();
+      pendingMiss=[];_ingestDay();closeEOD();
     });
     return;
   }
@@ -2274,7 +2303,7 @@ function confirmPickupCarry(){
       pickup.open=true;
     }
   }
-  pendingMiss=[];closeEOD();
+  pendingMiss=[];_ingestDay();closeEOD();
   const msg=(toPickup.length?`${toPickup.length} shot${toPickup.length!==1?'s':''} added to Pickup`:'')+
             (toLog.length?` · ${toLog.length} logged as unused`:'');
   if(msg.trim())toast(msg.trim(),true);
@@ -2311,7 +2340,7 @@ function confirmNextDay(){
       kept.forEach(s=>cf.shots.push({...s,id:uid(),done:false}));
       targetDay.open=true;
     }
-    pendingMiss=[];closeEOD();render();
+    pendingMiss=[];_ingestDay();closeEOD();render();
     const msgs=[];
     if(kept.length)msgs.push(`${kept.length} shot${kept.length!==1?'s':''} carried to ${targetDay?.name||'next day'}`);
     if(notKept.length)msgs.push(`${notKept.length} logged as unused`);
@@ -2332,7 +2361,7 @@ function confirmNextDay(){
   const insertIdx=days.findIndex(d=>d.locked&&d.num>=99);
   if(insertIdx>=0)days.splice(insertIdx,0,newDay);
   else days.push(newDay);
-  pendingMiss=[];closeEOD();render();
+  pendingMiss=[];_ingestDay();closeEOD();render();
   const msgs=[];
   if(kept.length)msgs.push(`"${name}" created · ${kept.length} shot${kept.length!==1?'s':''} carried`);
   else msgs.push(`"${name}" created`);
