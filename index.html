@@ -2685,7 +2685,7 @@ const FB_STATE   = FB_BASE + '/shotlist/state.json';
 const FB_CL      = FB_BASE + '/shotlist/checklist.json';
 const _clientId  = Math.random().toString(36).slice(2);
 let _fbSaveTimer = null, _syncDotTimer = null, _fbReady = false, _lastSeenTs = 0;
-let _sseState = null, _sseCl = null;
+let _sseState = null, _sseCl = null, _sseRetryTimer = null, _sseEverConnected = false;
 
 function _setSyncDot(s){
   const dot=document.getElementById('sync-dot');if(!dot)return;
@@ -2732,11 +2732,22 @@ function saveChecklist(){
 }
 
 function clearSavedState(){
-  fetch(FB_STATE,{method:'DELETE'}).catch(()=>{});
+  // Write a clean reset marker instead of DELETE — DELETE causes other devices'
+  // SSE streams to close/reopen and can leave them in a broken state
+  const resetSnap={days:JSON.parse(JSON.stringify(INIT)),unusedLog:[],_ts:Date.now(),_clientId,_reset:true};
+  fetch(FB_STATE,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(resetSnap)}).catch(()=>{});
   fetch(FB_CL,{method:'DELETE'}).catch(()=>{});
 }
 
 function updateVehicle(){window._LIVE_BUILD=getBuildName();saveState();}
+
+// Mobile Safari SSE recovery — when app comes back from background the SSE
+// is silently dead. Detect page becoming visible again and reconnect + fetch.
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='visible'&&_fbReady){
+    _startSSE(); // reconnect SSE (open event will fetch current state)
+  }
+});
 
 window.addEventListener('beforeunload',()=>{
   clearTimeout(_fbSaveTimer);
@@ -2796,19 +2807,52 @@ function _hideLoader(){
   if(el){el.classList.add('hidden');setTimeout(()=>{el.style.display='none';},500);}
 }
 
+let _sseRetryDelay=3000;
+function _fetchAndApply(){
+  // Pull current state directly from Firebase — used on SSE reconnect
+  fetch(FB_STATE).then(r=>r.json()).then(s=>{
+    if(!s||!_fbReady)return;
+    if(s._clientId===_clientId)return;
+    if(s._ts&&s._ts<=_lastSeenTs)return;
+    _lastSeenTs=s._ts||0;_applyState(s,true);toast('Synced ✓',true);
+  }).catch(()=>{});
+}
 function _startSSE(){
   if(_sseState)_sseState.close();
   _sseState=new EventSource(FB_BASE+'/shotlist/state.json?stream=true');
   _sseState.addEventListener('put',e=>{
-    try{const msg=JSON.parse(e.data);const s=msg.data;
+    try{
+      const msg=JSON.parse(e.data);const s=msg.data;
       if(!s||!_fbReady)return;
       if(s._clientId===_clientId)return; // our own write echoed back
-      if(Date.now()<_suppressUntil)return; // suppress window active — skip re-render
+      if(Date.now()<_suppressUntil)return; // suppress window active
       if(s._ts&&s._ts<=_lastSeenTs)return;
-      _lastSeenTs=s._ts||0;_applyState(s, true);toast('Shot list updated ✓',true);
-    }catch(err){}
+      _lastSeenTs=s._ts||0;
+      _sseRetryDelay=3000; // reset backoff on successful message
+      // If another device hit Reset, apply it cleanly here too
+      if(s._reset){
+        days=JSON.parse(JSON.stringify(INIT));
+        unusedLog=[];eodId=null;pendingMiss=[];
+        render();toast('Shot list was reset on another device',false);
+        return;
+      }
+      _applyState(s,true);toast('Shot list updated ✓',true);
+    }catch(err){console.error('SSE apply error:',err);}
   });
-  _sseState.onerror=()=>setTimeout(()=>{if(_fbReady)_startSSE();},5000);
+  _sseState.addEventListener('open',()=>{
+    _sseRetryDelay=3000;
+    // Only fetch on reconnect — boot fetch already handles the initial load
+    if(_sseEverConnected)_fetchAndApply();
+    _sseEverConnected=true;
+  });
+  _sseState.onerror=()=>{
+    if(!_fbReady)return;
+    clearTimeout(_sseRetryTimer);
+    _sseRetryTimer=setTimeout(()=>{
+      _sseRetryDelay=Math.min(_sseRetryDelay*2,30000); // exponential backoff up to 30s
+      _startSSE();
+    },_sseRetryDelay);
+  };
 
   if(_sseCl)_sseCl.close();
   _sseCl=new EventSource(FB_BASE+'/shotlist/checklist.json?stream=true');
