@@ -2694,12 +2694,12 @@ function _setSyncDot(s){
 }
 
 function _getSnapshot(){
-  let ep=0;
-  for(let i=1;i<=4;i++){const el=document.getElementById('eod-phase'+i);if(el&&el.style.display!=='none')ep=i;}
-  const eo=!document.getElementById('eod-bg')?.classList.contains('off');
-  return{days,unusedLog,showAddDay,pendingMiss:pendingMiss||[],
-    eodId:ep>1&&eo?eodId:null,eodPhase:eo?ep:0,build:window._LIVE_BUILD||'',
-    carryTarget:window._carryTarget||null,
+  // NOTE: eodId, eodPhase, pendingMiss, carryTarget are intentionally excluded.
+  // These are ephemeral per-device UI states. Saving them to Firebase causes other
+  // devices to receive and try to restore EOD flow state that belongs to a different device.
+  // Deep-copy days so any in-flight mutations during the 400ms debounce don't corrupt the snapshot.
+  return{days:JSON.parse(JSON.stringify(days)),unusedLog,showAddDay,
+    build:window._LIVE_BUILD||'',
     hdr:{year:(document.getElementById('hdr-year')||{}).value||'',
          make:(document.getElementById('hdr-make')||{}).value||'',
          model:(document.getElementById('hdr-model')||{}).value||''},
@@ -2778,9 +2778,7 @@ function _applyState(s, fromSSE){
   if(s.unusedLog)unusedLog=s.unusedLog;
   if(typeof s.showAddDay==='boolean')showAddDay=s.showAddDay;
   if(s.build)window._LIVE_BUILD=s.build;
-  if(s.pendingMiss&&s.pendingMiss.length)pendingMiss=s.pendingMiss;
-  if(s.eodId)eodId=s.eodId;
-  if(s.carryTarget)window._carryTarget=s.carryTarget;
+  // eodId, eodPhase, pendingMiss, carryTarget no longer saved to Firebase
   const savedIds=new Set(days.map(d=>d.id));
   INIT.forEach(id=>{if(!savedIds.has(id.id)){const at=days.findIndex(d=>d.num>id.num);if(at>=0)days.splice(at,0,JSON.parse(JSON.stringify(id)));else days.push(JSON.parse(JSON.stringify(id)));}});
   days.sort((a,b)=>a.num-b.num);
@@ -2789,16 +2787,6 @@ function _applyState(s, fromSSE){
     if(s.hdr.year){const el=document.getElementById('hdr-year');if(el)el.value=s.hdr.year;}
     if(s.hdr.make){const el=document.getElementById('hdr-make');if(el)el.value=s.hdr.make;}
     if(s.hdr.model){const el=document.getElementById('hdr-model');if(el)el.value=s.hdr.model;}
-  });}
-  if(s.eodPhase&&s.eodPhase>1&&s.eodId){requestAnimationFrame(()=>{
-    const bg=document.getElementById('eod-bg');
-    if(bg){bg.classList.remove('off');
-      if(s.eodPhase===3){
-        if(s.carryTarget)startCarryToDay(s.carryTarget);
-        else startNextDay();
-      }
-      else if(s.eodPhase===4)goToPickup();
-      else showEODPhase(s.eodPhase);}
   });}
 }
 
