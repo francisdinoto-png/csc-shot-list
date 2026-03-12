@@ -1632,14 +1632,11 @@ function render(){
   wrap.innerHTML='';
 
   days.forEach(day=>{
-    try{
-    if(!day.moments||!Array.isArray(day.moments)){
-      const errCard=D('day-card');errCard.style.padding='12px';errCard.style.color='#ef4444';
-      errCard.textContent='ERROR: day "'+day.id+'" has no moments array';
-      wrap.appendChild(errCard);return;
-    }
-    const total=day.moments.reduce((a,mo)=>a+(mo.shots?mo.shots.length:0),0);
-    const done=day.moments.reduce((a,mo)=>a+mo.shots.filter(s=>s.done).length,0);
+    // Defensive guard — skip malformed days rather than crashing the whole render
+    if(!day||!day.id||!day.moments||!Array.isArray(day.moments)){return;}
+    day.moments.forEach(mo=>{if(!mo.shots||!Array.isArray(mo.shots))mo.shots=[];});
+    const total=day.moments.reduce((a,mo)=>a+mo.shots.length,0);
+    const done=day.moments.reduce((a,mo)=>a+mo.shots.filter(s=>s&&s.done).length,0);
     const pct=total>0?Math.round(done/total*100):0;
     const all=pct===100&&total>0;
     const card=D('day-card');
@@ -1992,12 +1989,6 @@ function render(){
     body.appendChild(footer);
     }
     card.appendChild(body);wrap.appendChild(card);
-    }catch(err){
-      const errCard=D('day-card');errCard.style.padding='12px 18px';errCard.style.color='#ef4444';
-      errCard.style.background='#1a0000';errCard.style.border='1px solid #7f1d1d';
-      errCard.textContent='DAY RENDER ERROR ['+day.id+']: '+err.message;
-      wrap.appendChild(errCard);
-    }
   });
 }
 // saveState is now called explicitly after data mutations — never from render()
@@ -2880,6 +2871,9 @@ function _startSSE(){
 window._LIVE_BUILD='2026-Audi-RS3';
 render(); // show INIT data immediately — render no longer writes to Firebase
 
+// Guaranteed loader removal — no matter what happens, loader comes down after 6s
+setTimeout(()=>{_fbReady=true;_hideLoader();},6000);
+
 fetch(FB_STATE)
   .then(r=>r.json())
   .then(s=>{
@@ -2888,7 +2882,7 @@ fetch(FB_STATE)
     else{_lastSeenTs=s._ts||0;_applyState(s);toast('Progress restored ✓',true);}
     _startSSE();
   })
-  .catch(()=>{_fbReady=true;_hideLoader();toast('⚠ Cloud sync unavailable',false);});
+  .catch(()=>{_fbReady=true;_hideLoader();_startSSE();toast('⚠ Cloud sync unavailable — working offline',false);});
 
 fetch(FB_CL).then(r=>r.json()).then(data=>{
   if(!data)return;
