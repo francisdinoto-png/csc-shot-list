@@ -440,7 +440,6 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #111; color: #EA
 </div>
 
 <!-- ════ SHOT LIST PANE ════ -->
-<div id="debug-bar" style="position:fixed;bottom:0;left:0;right:0;background:#1a0a0a;color:#ff9900;font-size:11px;font-family:monospace;padding:8px 12px;z-index:9999;border-top:1px solid #333;display:none;word-break:break-all;"></div>
 <div id="pane-list">
   <div id="sl-header">
     <div class="hdr-row">
@@ -1628,7 +1627,6 @@ function dropShot(toMomentId,toDayId,toIndex){
 
 // ── RENDER ────────────────────────────────────────────────
 function render(){
-  dbg('RENDER: '+days.length+' days | '+days.map(d=>d.id+':open='+d.open).join(', '));
   document.getElementById('add-day-wrap').style.display=showAddDay?'block':'none';
   const wrap=document.getElementById('days-wrap');
   wrap.innerHTML='';
@@ -2759,17 +2757,22 @@ window.addEventListener('beforeunload',()=>{
 function _applyState(s, fromSSE){
   if(fromSSE){
     // SSE update from another device: merge carefully
+    // Guard: if the incoming data has no valid days array, ignore it entirely
+    // rather than wiping the screen
+    if(!s.days||!Array.isArray(s.days)||s.days.length===0){
+      toast('Sync update received (no day data)',false);
+      return;
+    }
     // 1. Snapshot which days are open on THIS device right now
     const localOpen={};
     days.forEach(d=>{localOpen[d.id]=d.open;});
     // 2. Apply incoming shot/log data
-    if(s.days)days=s.days;
+    days=s.days;
     if(s.unusedLog)unusedLog=s.unusedLog;
     if(s.build)window._LIVE_BUILD=s.build;
     // 3. Restore this device's open states so nothing collapses
     days.forEach(d=>{if(d.id in localOpen)d.open=localOpen[d.id];});
-    dbg('SSE APPLIED: '+days.map(d=>d.id+':'+d.moments?.reduce((a,m)=>a+m.shots.length,0)+'shots').join(', '));
-    // 4. Never apply per-device workflow state from another device
+    // 4. Merge any INIT days that are missing
     const savedIds=new Set(days.map(d=>d.id));
     INIT.forEach(id=>{if(!savedIds.has(id.id)){const at=days.findIndex(d=>d.num>id.num);if(at>=0)days.splice(at,0,JSON.parse(JSON.stringify(id)));else days.push(JSON.parse(JSON.stringify(id)));}});
     days.sort((a,b)=>a.num-b.num);
@@ -2791,13 +2794,6 @@ function _applyState(s, fromSSE){
     if(s.hdr.make){const el=document.getElementById('hdr-make');if(el)el.value=s.hdr.make;}
     if(s.hdr.model){const el=document.getElementById('hdr-model');if(el)el.value=s.hdr.model;}
   });}
-}
-
-function dbg(msg){
-  const el=document.getElementById('debug-bar');
-  if(!el)return;
-  el.style.display='block';
-  el.textContent='['+new Date().toLocaleTimeString()+']: '+msg;
 }
 
 function _hideLoader(){
@@ -2827,9 +2823,7 @@ function _startSSE(){
       if(s._ts&&s._ts<=_lastSeenTs)return;
       _lastSeenTs=s._ts||0;
       _sseRetryDelay=3000; // reset backoff on successful message
-      const dayCounts=s.days?s.days.map(d=>d.id+':'+d.moments?.reduce((a,m)=>a+m.shots.length,0)+'shots').join(', '):'NO DAYS';
-      console.log('[SSE PUT] days:', dayCounts);
-      dbg('SSE received: '+(s.days?s.days.length:'0')+' days | '+dayCounts);
+
       // If another device hit Reset, apply it cleanly here too
       if(s._reset){
         days=JSON.parse(JSON.stringify(INIT));
