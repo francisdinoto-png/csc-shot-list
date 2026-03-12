@@ -1632,7 +1632,13 @@ function render(){
   wrap.innerHTML='';
 
   days.forEach(day=>{
-    const total=day.moments.reduce((a,mo)=>a+mo.shots.length,0);
+    try{
+    if(!day.moments||!Array.isArray(day.moments)){
+      const errCard=D('day-card');errCard.style.padding='12px';errCard.style.color='#ef4444';
+      errCard.textContent='ERROR: day "'+day.id+'" has no moments array';
+      wrap.appendChild(errCard);return;
+    }
+    const total=day.moments.reduce((a,mo)=>a+(mo.shots?mo.shots.length:0),0);
     const done=day.moments.reduce((a,mo)=>a+mo.shots.filter(s=>s.done).length,0);
     const pct=total>0?Math.round(done/total*100):0;
     const all=pct===100&&total>0;
@@ -1986,6 +1992,12 @@ function render(){
     body.appendChild(footer);
     }
     card.appendChild(body);wrap.appendChild(card);
+    }catch(err){
+      const errCard=D('day-card');errCard.style.padding='12px 18px';errCard.style.color='#ef4444';
+      errCard.style.background='#1a0000';errCard.style.border='1px solid #7f1d1d';
+      errCard.textContent='DAY RENDER ERROR ['+day.id+']: '+err.message;
+      wrap.appendChild(errCard);
+    }
   });
 }
 // saveState is now called explicitly after data mutations — never from render()
