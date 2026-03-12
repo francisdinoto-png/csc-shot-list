@@ -1526,7 +1526,7 @@ function saveDayName(dayId){
   const val=inp.value.trim();
   const day=days.find(d=>d.id===dayId);
   if(day&&val)day.name=val;
-  editingDayId=null;render();
+  editingDayId=null;saveState();render();
 }
 function moveDayUp(dayId,e){
   e.stopPropagation();
@@ -1622,7 +1622,7 @@ function dropShot(toMomentId,toDayId,toIndex){
   toMo.shots.splice(insertAt,0,{...movedShot,id:uid()});
   toDay.open=true;
   drag.shotId=null;drag.momentId=null;drag.dayId=null;
-  render();
+  saveState();render();
 }
 
 // ── RENDER ────────────────────────────────────────────────
@@ -1639,7 +1639,7 @@ function render(){
     const card=D('day-card');
 
     const hdr=D('day-hdr'); hdr.style.background=day.color;
-    hdr.onclick=()=>{day.open=!day.open;render();};
+    hdr.onclick=()=>{day.open=!day.open;saveState();render();};
     hdr.appendChild(S('caret'+(day.open?' open':''),'▶'));
     const tc=D('day-title-col');
     tc.appendChild(S('day-name',day.name));
@@ -1806,11 +1806,15 @@ function render(){
           const v=st.textContent.trim();
           if(v&&v!==shot.text){
             shot.text=v;
-            // Clear any manual filename override so slug regenerates from new text
-            delete shot.customFn;
-            delete shot.customFns;
-            delete shot.fnSlug;
-            render();
+            // Clear overrides so filename regenerates from new text
+            delete shot.customFn;delete shot.customFns;delete shot.fnSlug;
+            // Surgical: update filename buttons in place — no render needed
+            const newFns=buildFn(day.num,shot.type,v,shot.fmt,null,null,null);
+            newFns.forEach((newFn,fi)=>{
+              const fe=document.getElementById('fe-'+shot.id+'-'+fi);
+              if(fe){const btn=fe.querySelector('.fn-full');if(btn)btn.textContent=newFn;}
+            });
+            saveState();
           }
         };
         st.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();st.blur();}if(e.key==='Escape'){st.textContent=shot.text;st.blur();}};
@@ -1838,11 +1842,18 @@ function render(){
               inp.focus();inp.select();
               const commit=()=>{
                 const raw=inp.value.trim().replace(/[^\w\-_.]/g,'-').replace(/-+/g,'-')||fn;
+                // Save to model
                 if(raw!==fn){
                   if(shot.fmt==='H+V'){if(!shot.customFns)shot.customFns={};shot.customFns[fi]=raw;}
                   else{shot.customFn=raw;}
                 }
-                render();
+                // Surgical: swap input back to button with updated name — no render needed
+                fnWrap.innerHTML='';
+                const newBtn=makeBtn();
+                // Update the button text to show the committed name
+                newBtn.textContent=raw;
+                fnWrap.appendChild(newBtn);
+                saveState();
               };
               inp.onblur=commit;
               inp.onkeydown=e2=>{
@@ -1893,14 +1904,14 @@ function render(){
         const tp=document.createElement('span');
         tp.className='pill-type '+(shot.type==='SELFTAPE'?'pill-type-st':'pill-type-br');
         tp.textContent=shot.type||'BROLL';tp.title='Tap to toggle BROLL / SELFTAPE';
-        tp.onclick=e=>{e.stopPropagation();shot.type=shot.type==='SELFTAPE'?'BROLL':'SELFTAPE';render();};
+        tp.onclick=e=>{e.stopPropagation();shot.type=shot.type==='SELFTAPE'?'BROLL':'SELFTAPE';saveState();render();};
         pills.appendChild(tp);
 
         const essPill=document.createElement('span');
         if(shot.essential===false){essPill.className='pill-sug pill-toggle';essPill.textContent='◌ NICE';}
         else{essPill.className='pill-ess pill-toggle';essPill.textContent='● NEED';}
         essPill.title='Tap to switch between NEED and NICE';
-        essPill.onclick=e=>{e.stopPropagation();shot.essential=shot.essential===false?true:false;render();};
+        essPill.onclick=e=>{e.stopPropagation();shot.essential=shot.essential===false?true:false;saveState();render();};
         pills.appendChild(essPill);
 
         if(shot.social){const sp=document.createElement('span');sp.className='pill-social';sp.textContent='SOCIAL';pills.appendChild(sp);}
@@ -1912,7 +1923,7 @@ function render(){
             const active=shot.fmt===f;
             const ac=f==='H'?'active-H':f==='V'?'active-V':f==='H+V'?'active-HV':'active-ANY';
             const fb=B('fmt-btn'+(active?' '+ac:''),f==='H+V'?'H+V':f==='ANYTIME'?'ANY':f);
-            fb.onclick=e=>{e.stopPropagation();shot.fmt=f;render();};
+            fb.onclick=e=>{e.stopPropagation();shot.fmt=f;saveState();render();};
             ft.appendChild(fb);
           });
           sr.appendChild(ft);
@@ -1927,7 +1938,7 @@ function render(){
             if(dayEntry){dayEntry.shots.push(logShot);}
             else{unusedLog.push({dayName:day.name,dayNum:day.num,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'}),shots:[logShot]});}
           }
-          mo.shots.splice(si,1);render();
+          mo.shots.splice(si,1);saveState();render();
         };
         sr.appendChild(del);
         row.appendChild(sr);
@@ -1976,8 +1987,8 @@ function render(){
     }
     card.appendChild(body);wrap.appendChild(card);
   });
-  saveState();
 }
+// saveState is now called explicitly after data mutations — never from render()
 
 // ── ADD SHOT ──────────────────────────────────────────────
 function focusAdd(){const i=document.getElementById('add-inp');if(i){i.focus();i.value=addText;i.setSelectionRange(addText.length,addText.length);refPrev();}}
@@ -1995,7 +2006,7 @@ function doAdd(mo,day){
   const inp=document.getElementById('add-inp');
   const text=(inp?inp.value:addText).trim();if(!text)return;
   mo.shots.push({id:uid(),text,fmt:addFmt,type:addType,done:false,custom:true,social:false,essential:addEss});
-  addIn=null;addText='';addEss=true;render();
+  addIn=null;addText='';addEss=true;saveState();render();
 }
 
 // ── VEHICLE HEADER ────────────────────────────────────────
@@ -2084,7 +2095,7 @@ function confirmAddDay(){
   if(insertIdx>=0) days.splice(insertIdx,0,newDay);
   else days.push(newDay);
   document.getElementById('nd-name').value='';
-  showAddDay=false;render();
+  showAddDay=false;saveState();render();
 }
 
 // ── COPY FOR AI ───────────────────────────────────────────
@@ -2163,7 +2174,7 @@ function closeEOD(){
   eodId=null;pendingMiss=[];
   [1,2,3,4].forEach(i=>{document.getElementById('eod-phase'+i).style.display=i===1?'block':'none';});
   document.getElementById('eod-copy-overlay').style.display='none';
-  render(); // render calls saveState — no extra saves needed
+  saveState();render();
 }
 let pendingMiss=[];
 function showEODPhase(n){
@@ -2227,9 +2238,9 @@ function _buildPhase2(){
   // ── Pickup: open Post-Wrap, no carry ──
   if(isPickup){
     addBtn('✓','All Done — Move to Post-Wrap','Wrap it up. Post-Wrap is next.',()=>{
-      _ingestDay();closeEOD();
       const pw=days.find(d=>d.id==='d-postwrap');
-      if(pw){pw.open=true;render();}
+      if(pw)pw.open=true;
+      _ingestDay();saveState();closeEOD();
     });
     return;
   }
@@ -2247,9 +2258,9 @@ function _buildPhase2(){
         else{unusedLog.push({dayName,dayNum,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'}),shots:logShots});}
       }
       pendingMiss=[];
-      _ingestDay();closeEOD();
       const pickup=days.find(d=>d.id==='d-pickup');
-      if(pickup){pickup.open=true;render();}
+      if(pickup)pickup.open=true;
+      _ingestDay();saveState();closeEOD();
     });
     addBtn('✓','Done — No Pickup Needed','Close out the build.',()=>{
       // Still log unused shots even if skipping Pickup
@@ -2398,7 +2409,7 @@ function confirmNextDay(){
       kept.forEach(s=>cf.shots.push({...s,id:uid(),done:false}));
       targetDay.open=true;
     }
-    pendingMiss=[];_ingestDay();closeEOD();render();
+    pendingMiss=[];_ingestDay();closeEOD();
     const msgs=[];
     if(kept.length)msgs.push(`${kept.length} shot${kept.length!==1?'s':''} carried to ${targetDay?.name||'next day'}`);
     if(notKept.length)msgs.push(`${notKept.length} logged as unused`);
@@ -2419,7 +2430,7 @@ function confirmNextDay(){
   const insertIdx=days.findIndex(d=>d.locked&&d.num>=99);
   if(insertIdx>=0)days.splice(insertIdx,0,newDay);
   else days.push(newDay);
-  pendingMiss=[];_ingestDay();closeEOD();render();
+  pendingMiss=[];_ingestDay();closeEOD();
   const msgs=[];
   if(kept.length)msgs.push(`"${name}" created · ${kept.length} shot${kept.length!==1?'s':''} carried`);
   else msgs.push(`"${name}" created`);
@@ -2798,7 +2809,7 @@ function _startSSE(){
 
 // ── BOOT ── all functions defined, safe to run ─────────────
 window._LIVE_BUILD='2026-Audi-RS3';
-render(); // show INIT data immediately — no blank screen
+render(); // show INIT data immediately — render no longer writes to Firebase
 
 fetch(FB_STATE)
   .then(r=>r.json())
