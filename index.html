@@ -2743,7 +2743,26 @@ window.addEventListener('beforeunload',()=>{
   try{navigator.sendBeacon(FB_STATE,JSON.stringify(_getSnapshot()));}catch(e){}
 });
 
-function _applyState(s){
+function _applyState(s, fromSSE){
+  if(fromSSE){
+    // SSE update from another device: merge carefully
+    // 1. Snapshot which days are open on THIS device right now
+    const localOpen={};
+    days.forEach(d=>{localOpen[d.id]=d.open;});
+    // 2. Apply incoming shot/log data
+    if(s.days)days=s.days;
+    if(s.unusedLog)unusedLog=s.unusedLog;
+    if(s.build)window._LIVE_BUILD=s.build;
+    // 3. Restore this device's open states so nothing collapses
+    days.forEach(d=>{if(d.id in localOpen)d.open=localOpen[d.id];});
+    // 4. Never apply per-device workflow state from another device
+    const savedIds=new Set(days.map(d=>d.id));
+    INIT.forEach(id=>{if(!savedIds.has(id.id)){const at=days.findIndex(d=>d.num>id.num);if(at>=0)days.splice(at,0,JSON.parse(JSON.stringify(id)));else days.push(JSON.parse(JSON.stringify(id)));}});
+    days.sort((a,b)=>a.num-b.num);
+    render();
+    return;
+  }
+  // ── Page load / refresh path ──
   if(s.days)days=s.days;
   if(s.unusedLog)unusedLog=s.unusedLog;
   if(typeof s.showAddDay==='boolean')showAddDay=s.showAddDay;
@@ -2764,7 +2783,6 @@ function _applyState(s){
     const bg=document.getElementById('eod-bg');
     if(bg){bg.classList.remove('off');
       if(s.eodPhase===3){
-        // Restore carry flow — check if it was carry-to-existing or create-new
         if(s.carryTarget)startCarryToDay(s.carryTarget);
         else startNextDay();
       }
@@ -2787,7 +2805,7 @@ function _startSSE(){
       if(s._clientId===_clientId)return; // our own write echoed back
       if(Date.now()<_suppressUntil)return; // suppress window active — skip re-render
       if(s._ts&&s._ts<=_lastSeenTs)return;
-      _lastSeenTs=s._ts||0;_applyState(s);toast('Shot list updated ✓',true);
+      _lastSeenTs=s._ts||0;_applyState(s, true);toast('Shot list updated ✓',true);
     }catch(err){}
   });
   _sseState.onerror=()=>setTimeout(()=>{if(_fbReady)_startSSE();},5000);
