@@ -6,28 +6,16 @@
 <title>CSC — Shot List</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* ═══════════════════════════════════════════════════════════
-   RESET + BASE
-═══════════════════════════════════════════════════════════ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-size: 15px; background: #111; }
 body { font-family: 'Inter', system-ui, sans-serif; background: #111; color: #EAEBED; min-height: 100vh; -webkit-font-smoothing: antialiased; }
-
-/* ═══════════════════════════════════════════════════════════
-   TABS
-═══════════════════════════════════════════════════════════ */
 #tab-bar { position: sticky; top: 0; z-index: 300; display: flex; background: #0a0a0a; border-bottom: 1px solid #1e1e1e; }
 .tab-btn { flex: 1; padding: 14px 0; font-family: inherit; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; border: none; background: transparent; color: #888; cursor: pointer; border-bottom: 2px solid transparent; transition: all .18s; }
 .tab-btn.active { color: #fff; border-bottom-color: #E8460A; }
 .tab-btn:hover:not(.active) { color: #999; }
 .tab-print { flex: 0 !important; padding: 14px 18px !important; font-size: 14px !important; }
-
 #pane-list  { display: block; }
 #pane-check { display: none;  }
-
-/* ═══════════════════════════════════════════════════════════
-   SHOT LIST — HEADER
-═══════════════════════════════════════════════════════════ */
 #sl-header { background: #0a0a0a; border-bottom: 1px solid #1e1e1e; padding: 14px 20px 12px; }
 .hdr-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .hdr-brand   { font-size: 12px; font-weight: 700; letter-spacing: .1em; color: #E8460A; text-transform: uppercase; white-space: nowrap; }
@@ -43,13 +31,8 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #111; color: #EA
 .legend { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 9px; align-items: center; }
 .l-badge { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: 500; white-space: nowrap; border: 1px solid transparent; }
 .l-hint { font-size: 11px; color: #BBB9B3; margin-left: 2px; }
-
-/* ═══════════════════════════════════════════════════════════
-   SHOT LIST — DAYS
-═══════════════════════════════════════════════════════════ */
 #days-wrap { max-width: 840px; margin: 0 auto; padding: 16px 14px 100px; }
 .day-card { margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid #1e1e1e; }
-
 .day-hdr { display: flex; align-items: center; gap: 12px; padding: 13px 18px; cursor: pointer; user-select: none; transition: filter .15s; }
 .day-hdr:hover { filter: brightness(1.07); }
 .caret { font-size: 10px; color: rgba(255,255,255,.25); transition: transform .2s ease; flex-shrink: 0; }
@@ -60,10 +43,8 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #111; color: #EA
 .day-count { font-size: 11px; font-weight: 500; white-space: nowrap; }
 .pbar  { width: 64px; height: 3px; background: rgba(255,255,255,.1); border-radius: 2px; }
 .pfill { height: 100%; border-radius: 2px; transition: width .3s ease; }
-
 .day-body { background: #141414; }
 .day-body.closed { display: none; }
-
 .moment { border-top: 1px solid #1d1d1d; }
 .moment:first-child { border-top: none; }
 .moment-hdr { display: flex; align-items: center; gap: 10px; padding: 9px 18px 7px; background: #111; }
@@ -72,31 +53,25 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #111; color: #EA
 .m-add  { font-family: inherit; font-size: 11px; font-weight: 500; cursor: pointer; background: none; border: 1px solid #333; color: #888; padding: 3px 11px; border-radius: 5px; transition: all .15s; }
 .m-add:hover { border-color: #3B82F6; color: #3B82F6; }
 .cf-tag { font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #7C3AED; margin-left: 6px; }
-
 .shot { display: flex; align-items: flex-start; gap: 10px; padding: 10px 18px; border-top: 1px solid #181818; transition: background .1s; position: relative; }
 .shot:hover { background: rgba(255,255,255,.018); }
 .shot.shot-sug { opacity: .75; }
 .shot.shot-sug:hover { opacity: 1; background: rgba(255,255,255,.018); }
 .shot.drag-over { background: rgba(124,58,237,.12); border-top-color: #7C3AED; }
 .shot.dragging  { opacity: .35; }
-
 .drag-handle { font-size: 14px; color: #484848; cursor: grab; flex-shrink: 0; margin-top: 2px; user-select: none; transition: color .15s; padding: 0 2px; }
 .drag-handle:hover { color: #888; }
 .drag-handle:active { cursor: grabbing; }
-
 .moment-drop-zone { min-height: 4px; transition: min-height .15s, background .15s; }
 .moment-drop-zone.drop-active { min-height: 32px; background: rgba(124,58,237,.08); border: 1px dashed #7C3AED33; border-radius: 4px; margin: 4px 18px; }
-
 .s-check { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; border-radius: 4px; border: 1.5px solid #2c2c2c; cursor: pointer; background: transparent; display: flex; align-items: center; justify-content: center; font-size: 10px; transition: all .15s; font-family: inherit; }
 .s-check.done { background: #14532d; border-color: #4ADE80; color: #4ADE80; }
-
 .s-body { flex: 1; min-width: 0; }
 .s-text { font-size: 13.5px; font-weight: 600; line-height: 1.5; color: #EAEBED; cursor: pointer; transition: color .12s; display: block; }
 .s-text:hover { color: #fff; }
 .s-text.done { text-decoration: line-through; color: #444; font-weight: 400; }
 .s-text.sug  { font-weight: 400; color: #B0B3BA; }
 .s-text.sug:hover { color: #999; }
-
 .s-text:focus { outline: none; background: rgba(255,255,255,.06); border-radius: 3px; padding: 0 4px; margin: 0 -4px; cursor: text; color: #fff; }
 .s-text[contenteditable]:hover:not(:focus) { cursor: pointer; }
 .s-fn { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #2a6a3a; margin-top: 5px; cursor: pointer; display: none; word-break: break-all; line-height: 1.6; transition: color .15s; }
@@ -127,7 +102,6 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #111; color: #EA
 .eod-pri-badge { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 4px; white-space: nowrap; flex-shrink: 0; margin-top: 1px; }
 .eod-pri-need { background: #fff; color: #111; }
 .eod-pri-nice { background: #1e1e1e; color: #9CA3AF; border: 1px solid #4a4a4a; }
-
 .s-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; padding-top: 2px; }
 .s-pills { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
 .pill { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 600; padding: 2px 7px; border-radius: 4px; white-space: nowrap; border: 1px solid transparent; }
@@ -137,10 +111,8 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #111; color: #EA
 .locked-badge { font-size: 9px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.2); margin-left: 8px; flex-shrink: 0; }
 .l-ess { background: #fff; color: #111; border-color: #fff !important; }
 .l-sug { background: #1e1e1e; color: #9CA3AF; border-color: #4a4a4a !important; }
-
 .pill-toggle { cursor: pointer; transition: opacity .12s; }
 .pill-toggle:hover { opacity: .75; }
-
 .shot-del { font-family: inherit; font-size: 10px; font-weight: 600; cursor: pointer; background: none; border: 1px solid transparent; color: #555; padding: 1px 5px; border-radius: 3px; transition: all .12s; line-height: 1; margin-top: 2px; }
 .shot-del:hover { border-color: #7f1d1d; color: #ef4444; background: rgba(239,68,68,.08); }
 .fmt-toggle { display: flex; gap: 2px; margin-top: 3px; }
@@ -150,10 +122,6 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #111; color: #EA
 .fmt-btn.active-V   { background: #1a2a4a; border-color: #60A5FA44; color: #60A5FA; }
 .fmt-btn.active-HV  { background: #14532d; border-color: #86EFAC44; color: #86EFAC; }
 .fmt-btn.active-ANY { background: #0c3a5c; border-color: #7DD3FC44; color: #7DD3FC; }
-
-/* ═══════════════════════════════════════════════════════════
-   ADD SHOT FORM
-═══════════════════════════════════════════════════════════ */
 .add-form { padding: 12px 18px; background: #0f0f0f; border-top: 1px solid #1d1d1d; display: flex; flex-direction: column; gap: 10px; }
 .add-form input { width: 100%; background: #0a0a0a; border: 1.5px solid #222; border-radius: 6px; padding: 9px 12px; color: #D0D1D4; font-family: inherit; font-size: 14px; outline: none; }
 .add-form input:focus { border-color: #3B82F6; }
@@ -174,18 +142,10 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #111; color: #EA
 .add-go:hover { background: #166534; }
 .add-x { font-family: inherit; font-size: 13px; cursor: pointer; background: none; border: none; color: #777; }
 .add-x:hover { color: #888; }
-
-/* ═══════════════════════════════════════════════════════════
-   DAY FOOTER
-═══════════════════════════════════════════════════════════ */
 .day-footer { display: flex; align-items: center; justify-content: space-between; padding: 10px 18px; background: #0f0f0f; border-top: 1px solid #1e1e1e; }
 .footer-stat { font-size: 11px; color: #666; }
 .eod-btn { font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; background: transparent; border: 1.5px solid #E8460A33; color: #E8460A; padding: 7px 18px; border-radius: 6px; transition: all .15s; }
 .eod-btn:hover { background: rgba(232,70,10,.1); border-color: #E8460A; }
-
-/* ═══════════════════════════════════════════════════════════
-   ADD DAY FORM
-═══════════════════════════════════════════════════════════ */
 #add-day-wrap { max-width: 840px; margin: 12px auto 0; padding: 0 14px; display: none; }
 .add-day-form { background: #141414; border: 1.5px dashed #222; border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
 .add-day-form input { width: 100%; background: #0a0a0a; border: 1.5px solid #222; border-radius: 6px; padding: 9px 12px; color: #D0D1D4; font-family: inherit; font-size: 14px; outline: none; }
@@ -194,10 +154,6 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #111; color: #EA
 .adc-ok { font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; background: #E8460A; border: none; color: #fff; padding: 8px 20px; border-radius: 6px; transition: background .15s; }
 .adc-ok:hover { background: #c93a08; }
 .adc-no { font-family: inherit; font-size: 12px; cursor: pointer; background: none; border: 1.5px solid #333; color: #888; padding: 8px 16px; border-radius: 6px; }
-
-/* ═══════════════════════════════════════════════════════════
-   EOD MODAL
-═══════════════════════════════════════════════════════════ */
 #eod-bg { position: fixed; inset: 0; background: rgba(0,0,0,.88); z-index: 500; display: flex; align-items: center; justify-content: center; padding: 16px; }
 #eod-bg.off { display: none; }
 #eod-box { background: #141414; border: 1px solid #252525; border-top: 3px solid #E8460A; border-radius: 10px; width: 100%; max-width: 520px; max-height: 88vh; overflow-y: auto; padding: 24px; }
@@ -237,19 +193,13 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #111; color: #EA
 .eod-close-btn { font-family: inherit; font-size: 12px; cursor: pointer; background: none; border: none; color: #888; }
 .eod-close-btn:hover { color: #aaa; }
 .eod-st { font-size: 11px; color: #666; margin-left: auto; }
-
-/* ═══════════════════════════════════════════════════════════
-   CHECKLIST PANE
-═══════════════════════════════════════════════════════════ */
 #pane-check {
   --ink:  #08090C; --ink2: #0F1116; --ink3: #161820;
   --border: rgba(255,255,255,0.06); --border2: rgba(255,255,255,0.11);
   --text: #E4E5EC; --muted: #525460; --label: #888A96;
   --orange: #E8460A; --orange2: #FF5920; --amber: #F0A500;
   --green: #4E9E47; --green2: #6FCF67; --blue: #4A7EC8; --teal: #1A8A6A;
-  background: var(--ink);
-  color: var(--text);
-  font-family: 'Barlow', sans-serif;
+  background: var(--ink); color: var(--text); font-family: 'Barlow', sans-serif;
   min-height: calc(100vh - 49px);
 }
 #pane-check .cl-wrap { max-width: 600px; margin: 0 auto; padding: 40px 24px 100px; }
@@ -333,10 +283,6 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #111; color: #EA
 #pane-check .done-sub { font-size:13px; color:var(--muted); line-height:1.75; }
 #pane-check .reset-btn { font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; background:transparent; color:var(--muted); border:1px solid var(--border2); border-radius:3px; padding:9px 18px; cursor:pointer; margin-top:24px; transition:color .2s; }
 #pane-check .reset-btn:hover { color:var(--text); }
-
-/* ═══════════════════════════════════════════════════════════
-   UNUSED LOG PANE
-═══════════════════════════════════════════════════════════ */
 #pane-unused { display: none; }
 #unused-wrap { max-width: 700px; margin: 0 auto; padding: 24px 16px 100px; }
 .unused-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
@@ -355,10 +301,6 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #111; color: #EA
 .unused-shot-text { flex: 1; font-size: 13px; color: #ccc; line-height: 1.4; min-width: 0; }
 .unused-moment-label { width: 100%; font-size: 10px; color: #444; font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
 .unused-shot-row:hover .unused-shot-text { color: #fff; }
-
-/* ═══════════════════════════════════════════════════════════
-   DAY EDIT PANEL
-═══════════════════════════════════════════════════════════ */
 .day-edit-btn { font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); color: rgba(255,255,255,.35); padding: 3px 9px; border-radius: 5px; transition: all .15s; flex-shrink: 0; line-height: 1; margin-left: 4px; }
 .day-edit-btn:hover { border-color: #E8460A55; color: #E8460A; background: rgba(232,70,10,.08); }
 .day-edit-btn.active { border-color: #E8460A; color: #E8460A; background: rgba(232,70,10,.12); }
@@ -374,10 +316,6 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #111; color: #EA
 .day-edit-del { font-family: inherit; font-size: 11px; font-weight: 600; cursor: pointer; background: transparent; border: 1px solid #2a2a2a; color: #555; padding: 7px 14px; border-radius: 5px; transition: all .15s; margin-left: auto; }
 .day-edit-del:hover { border-color: #7f1d1d; color: #ef4444; background: rgba(239,68,68,.06); }
 .day-edit-del.confirm { border-color: #ef4444; color: #ef4444; background: rgba(239,68,68,.1); }
-
-/* ═══════════════════════════════════════════════════════════
-   UNUSED LOG RESTORE
-═══════════════════════════════════════════════════════════ */
 .unused-restore-btn { font-family: inherit; font-size: 10px; font-weight: 600; cursor: pointer; background: transparent; border: 1px solid #2a3a2a; color: #4ADE8077; padding: 3px 9px; border-radius: 4px; transition: all .15s; white-space: nowrap; flex-shrink: 0; margin-top: 1px; }
 .unused-restore-btn:hover { border-color: #4ADE80; color: #4ADE80; background: rgba(74,222,128,.06); }
 .unused-restore-panel { width: 100%; margin-top: 8px; padding: 10px 12px; background: #0f1a0f; border: 1px solid #1a3a1a; border-radius: 6px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
@@ -415,7 +353,6 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #111; color: #EA
   .pill-sug { background: #fff !important; color: #999 !important; border: 1pt solid #ccc !important; font-size: 7pt !important; }
   .pill-social { background: #fff3e0 !important; color: #e65100 !important; border-color: #ffcc80 !important; font-size: 7pt !important; }
 }
-
 #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(70px); background: #1a1a1a; border: 1px solid #222; border-left: 3px solid #E8460A; color: #D0D1D4; font-size: 13px; padding: 11px 20px; border-radius: 8px; transition: transform .25s ease; z-index: 600; white-space: nowrap; max-width: 90vw; overflow: hidden; text-overflow: ellipsis; }
 #toast.show { transform: translateX(-50%) translateY(0); }
 #toast.ok   { border-left-color: #4ADE80; }
@@ -493,7 +430,7 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #111; color: #EA
     <span class="shotlist-link" onclick="switchTab('list')">Open Shot List →</span>
   </div>
   <div class="field-label">Build / Vehicle</div>
-  <input class="field-input" type="text" id="cl-vehicle" placeholder="e.g. Audi-RS3-Marcus" oninput="saveChecklist()">
+  <input class="field-input" type="text" id="cl-vehicle" placeholder="e.g. Porsche-993-Howard" oninput="saveChecklist()">
   <div class="field-label">Shoot Day</div>
   <select class="field-select" id="cl-shoot_day" onchange="saveChecklist()">
     <option value="" disabled selected>Select day</option>
@@ -509,7 +446,7 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #111; color: #EA
         <div class="step-info">
           <div class="step-timing">Morning — Before the car goes up</div>
           <div class="step-title">Morning Chat with John</div>
-          <div class="step-desc">Annie and John, behind the counter. Annie asks, John answers.</div>
+          <div class="step-desc">You and John, behind the counter. You ask, John answers.</div>
           <div class="hv-badge"><span class="hv-badge-icon">★</span><span class="hv-badge-text">Two cameras — shoot H and V simultaneously</span></div>
         </div>
         <div class="step-check"></div>
@@ -518,8 +455,8 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #111; color: #EA
         <div class="prompt-card">
           <div class="prompt-label">Camera setup</div>
           <div class="prompt-qs">
-            <div class="prompt-q"><div class="prompt-q-num">→</div><div>Camera 1: <strong>Horizontal</strong> — Annie + John behind the counter, wide enough to see both.</div></div>
-            <div class="prompt-q"><div class="prompt-q-num">→</div><div>Camera 2: <strong>Vertical</strong> — tighter on John or Annie for the social cut. Run both the entire time.</div></div>
+            <div class="prompt-q"><div class="prompt-q-num">→</div><div>Camera 1: <strong>Horizontal</strong> — you + John behind the counter, wide enough to see both.</div></div>
+            <div class="prompt-q"><div class="prompt-q-num">→</div><div>Camera 2: <strong>Vertical</strong> — tighter on John or you for the social cut. Run both the entire time.</div></div>
           </div>
         </div>
         <div class="prompt-card">
@@ -586,7 +523,7 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #111; color: #EA
         <div class="step-num"><span class="step-num-txt">4</span></div>
         <div class="step-info">
           <div class="step-timing">Evening — Right after John's recap</div>
-          <div class="step-title">Annie's VO Recap</div>
+          <div class="step-title">Your VO Recap</div>
           <div class="step-desc">Solo. Present tense. Walk through what John got done today — in your own words.</div>
         </div>
         <div class="step-check"></div>
@@ -618,15 +555,15 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #111; color: #EA
           <div class="prompt-label">File Naming Convention</div>
           <div class="naming-format">[BUILD]_D[#]_[TYPE]_[short-description]_[H or V].mp4</div>
           <div class="naming-examples">
-            <div class="naming-ex">Audi-RS3_D1_MORNING_john-plan_H.mp4</div>
-            <div class="naming-ex">Audi-RS3_D1_MORNING_john-plan_V.mp4</div>
-            <div class="naming-ex">Audi-RS3_D2_BROLL_amp-install_H.mp4</div>
-            <div class="naming-ex">Audi-RS3_REVEAL_first-listen_H.mp4</div>
+            <div class="naming-ex">Porsche993_D1_MORNING_john-plan_H.mp4</div>
+            <div class="naming-ex">Porsche993_D1_MORNING_john-plan_V.mp4</div>
+            <div class="naming-ex">Porsche993_D2_BROLL_amp-install_H.mp4</div>
+            <div class="naming-ex">Porsche993_REVEAL_first-listen_H.mp4</div>
           </div>
           <div class="naming-codes">
             <div class="naming-code"><strong>MORNING</strong>Opening check-in</div>
             <div class="naming-code"><strong>EOD-JOHN</strong>John's recap</div>
-            <div class="naming-code"><strong>EOD-ANNIE</strong>Annie's VO recap</div>
+            <div class="naming-code"><strong>EOD-ANNIE</strong>Your VO recap</div>
             <div class="naming-code"><strong>BROLL</strong>Install / product footage</div>
             <div class="naming-code"><strong>HOWTO</strong>Tip or trick moment</div>
             <div class="naming-code"><strong>TIMELAPSE</strong>Time-lapse clip</div>
@@ -641,7 +578,7 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #111; color: #EA
     </div>
   </div>
   <div class="divider"></div>
-  <div class="field-label-lg">Annie's Note for Today</div>
+  <div class="field-label-lg">Your Note for Today</div>
   <textarea class="notes-area" id="cl-notes" placeholder="What got missed and why. Anything unexpected. Changes to plan. Anything Raven Outlier needs to know." oninput="saveChecklist()"></textarea>
   <div class="notes-hint">This goes straight into the 📓 BUILD LOG tab in the production sheet.</div>
   <button class="gen-btn" id="cl-sendBtn" onclick="clSendToSheet()">Send Day to Sheet →</button>
@@ -697,7 +634,7 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #111; color: #EA
         </div>
       </div>
       <div class="eod-sec">
-        <div class="eod-lbl">Annie's Note for Raven Outlier</div>
+        <div class="eod-lbl">Your Note for Raven Outlier</div>
         <textarea id="eod-note" class="eod-textarea" placeholder="What happened today, what you got, anything Raven needs to know..."></textarea>
       </div>
       <div class="eod-actions">
@@ -751,7 +688,7 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #111; color: #EA
 <script>
 // ── CONFIG ────────────────────────────────────────────────
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwN3EpUwQpMpByvBM98BLttHX3PmhnfCJFTY7MaFTa3tfDrHlAF0o71G3n2sTlKw_Vl/exec';
-const BUILD_NAME      = '2026-Audi-RS3';
+const BUILD_NAME      = '';
 
 // ── TABS ──────────────────────────────────────────────────
 function switchTab(t) {
@@ -782,726 +719,19 @@ function socialSegment(label){
 }
 function buildFn(dayNum,type,text,fmt,customFn,fnSlug,customFns){
   if(customFn) return fmt==='H+V'?[customFn.replace(/_[HV]\.mp4$/,'')+'_H.mp4',customFn.replace(/_[HV]\.mp4$/,'')+'_V.mp4']:[customFn];
-  const b=(window._LIVE_BUILD&&window._LIVE_BUILD.trim())?window._LIVE_BUILD:(BUILD_NAME!=='BUILD_NAME_HERE'?BUILD_NAME:'BUILD');
+  const b=(window._LIVE_BUILD&&window._LIVE_BUILD.trim())?window._LIVE_BUILD:(BUILD_NAME||'BUILD');
   const base=`${b}_D${dayNum}_${type}_${fnSlug||slug(text)}`;
   let result;
   if(fmt==='H+V') result=[base+'_H.mp4',base+'_V.mp4'];
   else result=[base+'_'+(fmt==='ANYTIME'?'H':fmt||'H')+'.mp4'];
-  // Apply per-index custom overrides (H+V individual file renames)
   if(customFns){Object.entries(customFns).forEach(([i,name])=>{if(result[i]!==undefined)result[i]=name;});}
   return result;
 }
 const FMT_CYCLE=['H','V','H+V','ANYTIME'];
 
-// s(text, fmt, social, essential)
-function s(text,fmt,social,essential){
-  const f=social?'H+V':(fmt||'H');
-  const ess=(essential===undefined)?true:!!essential;
-  return{id:uid(),text,fmt:f,type:autoType(text),done:false,custom:false,social:!!social,essential:ess};
-}
-function m(label,accent,shots){return{id:uid(),label,accent,shots,carried:false};}
-
-// ════════════════════════════════════════════════════════════════
-// SHOT LIST DATA — CHRONOLOGICAL ORDER
-// Shots flow in the order they would actually be filmed each day.
-// Morning → During Day → Afternoon → EOD Batch Filming → ANYTIME
-// ════════════════════════════════════════════════════════════════
-const INIT=[
-
-  // ════════════════════════════════════════════════════════
-  // DAY 1 — 3/11 — CODING SESSION & BUILD BEGINS
-  // ════════════════════════════════════════════════════════
-  {id:'d1',num:1,open:true,locked:false,name:'Day 1 — 3/11 · Coding Session & Build Begins',color:'#1B3A5E',moments:[
-
-    m('MORNING — Shop Opens · First Thing','#0369A1',[
-      s('Shop exterior — first light or early morning. Get this before anything moves.','H',false,true),
-      s('Shop interior waking up — bay lights on, tools out, nobody in frame yet','H',false,false),
-      s('Annie arriving or already in — whatever is real. Do not stage this.','H',false,true),
-      s('Annie + John first exchange of the day — natural, not directed.','H',false,true),
-      s('★ SOCIAL LIFT: Annie to camera — "Day 1. We\'re starting with something we\'ve never done before." 10 seconds. Vertical.','H',true,true),
-      s('Coffee, clipboard, phones on bench — shop life texture before the car arrives','H',false,false),
-      s('⚠ AMBIENT SOUND: Record 30 seconds of clean shop ambience — air tools, bay sounds, background hum. Editor needs this for transitions and under VO.','H',false,true),
-    ]),
-
-    m('MORNING — Car Arrives · RS3 Into the Bay  ★ TIME-SENSITIVE','#1A6B5A',[
-      s('RS3 arriving — tripod set wide outside, stationary. Let the car drive into frame and park.','H',false,true),
-      s('RS3 badge / RS3 lettering close-up — the nameplate. Simple ID shot.','H',false,true),
-      s('RS3 in the bay — tripod set wide, stationary. Car already parked.','H',false,true),
-      s('RS3 parked and still — tripod set at mid distance, stationary. Nothing touching it yet. First real look at the car.','H',false,true),
-      s('Interior wide — shop floor, RS3 in bay, team visible in background','H',false,true),
-      s('NOTE: Paul is VO-only per Annie\'s intake. Do not stage a customer arrival moment.','H',false,false),
-    ]),
-
-    m('MORNING — Before Coverage · Nothing Touched Yet','#8B1A1A',[
-      s('Wide exterior RS3 — front corner, back corner, both sides, straight front, straight back. Match these angles exactly on Day 3.','H',false,true),
-      s('RS3 parked — driver side profile. Match this angle on Day 3.','H',false,true),
-      s('RS3 parked — passenger side profile. Match this angle on Day 3.','H',false,true),
-      s('★ BEFORE SOUND DEMO: Play something through the factory SONOS right now — capture how it sounds and Annie\'s reaction. This is your "before" clip.','H',false,true),
-      s('Annie points to where the sound IS coming from — demonstrates the front-only problem on camera','H',false,true),
-      s('Annie points to the rear shelf — "This is where almost nothing is coming from right now"','H',false,true),
-      s('Rear shelf — factory 4" deck speakers in place. THIS is the before shot.','H',false,true),
-      s('Factory 4" speaker close-up — in housing, untouched. Hold on it.','H',false,true),
-      s('Dashboard — full wide, factory SONOS head unit visible and powered on','H',false,true),
-      s('Factory SONOS amp location — dead-on close-up. Document before removal.','H',false,true),
-      s('Factory door speaker grilles — front doors. Document stock config.','H',false,true),
-      s('Factory door speaker grilles — rear doors if accessible.','H',false,true),
-      s('Interior wide — from the driver\'s seat looking forward.','H',false,true),
-      s('Interior wide — from the back seat looking forward.','H',false,false),
-      s('Door panels — front and rear, document stock configuration','H',false,true),
-      s('Trunk — full open, stock floor, amp location if accessible','H',false,true),
-    ]),
-
-    m('MORNING — Annie + John Assess the RS3','#2D6A4F',[
-      s('Annie + John walk around the RS3 — both looking, talking, no script','H',false,true),
-      s('Annie + John at the rear shelf — Annie explains the 4" to 6x9 challenge, John physically shows the space constraint','H',false,true),
-      s('John opens rear shelf access panel — first look at factory speaker from inside before anything is disturbed','H',false,true),
-      s('John alone at the car — studying it before he touches anything.','H',false,true),
-      s('Annie explains SFD2 protocol to camera — what it is, what it locks, why it matters for this car','H',false,true),
-      s('Annie: "This is the first time we\'re doing SFD2" — stakes on camera, what\'s at risk if it doesn\'t work','H',false,true),
-      s('Annie references previous Audi/Zen V build — what was different then vs now','H',false,false),
-      s('Annie\'s face while John assesses — she\'s nervous. Don\'t miss it.','H',false,false),
-    ]),
-
-    m('MORNING — Products on the Table · All 4 Items','#B45309',[
-      s('All 4 products laid out on bench — organized spread, same order as install sequence','H',false,true),
-      s('Annie picks up each product in sequence — name, model number, what it does, why she chose it','H',false,true),
-      s('Helix V Eighteen DSP — Annie explains 18 channels, what that covers on 16 channels of RS3 audio','H',false,true),
-      s('★ SOCIAL LIFT: Sony XS-690ES 6x9 held next to factory 4" speaker — phone on tripod, vertical, stationary. Size difference is the story.','H',true,true),
-      s('NAV TV Zen V (NTV-KIT860) — Annie explains signal BEFORE vs AFTER SONOS processing. Why cleaner.','H',false,true),
-      s('OBD2 dongle — Annie explains the remote coding session with Sam at NPG in Canada','H',false,true),
-      s('Annie: the system goal — eliminate SONOS processing, full control of the sound stage','H',false,true),
-      s('Annie: what Paul described wanting — "engulfing, not just loud, clear highs mids and lows"','H',false,false),
-      s('Phase 2 tease — factory woofer staying now, sub upgrade later','H',false,false),
-    ]),
-
-    m('MORNING — Morning Check-In  ★ SOCIAL','#1E5FA3',[
-      s('★ SOCIAL LIFT: Annie + John at the counter — John walks through today\'s plan. Both phones on tripods. Vertical.','H',true,true),
-      s('John solo in the bay — "Here\'s what I\'m doing today." Phone propped.','H',true,true),
-      s('Annie solo — her look-ahead. Honest about the coding session nerves.','H',true,true),
-    ]),
-
-    m('MID-MORNING — Tension Beat · Before Sam Calls In','#E8460A',[
-      s('Annie + John prep the laptop — tripod set wide on the bench area, stationary.','H',false,true),
-      s('Coding software loading — phone propped aimed at the laptop screen, stationary.','H',false,true),
-      s('OBD2 dongle plugged into the RS3 port — phone aimed at the port connection, stationary.','H',false,true),
-      s('Annie to camera: "Here\'s what has to happen and why it might not" — tripod aimed at Annie, stationary.','H',false,true),
-      s('★ BEFORE AUDIO CHECK: Play the SONOS system right now — confirm it has sound. Last time it ever will.','H',false,true),
-      s('Annie\'s face before Sam calls in — phone or tripod aimed at her, stationary. Do not direct it.','H',false,false),
-    ]),
-
-    m('MID-MORNING — ⚠ Non-Camera Assets Needed for Coding Session','#8B4513',[
-      s('SOURCE: SAM PHOTO — Get a photo of Sam from NPG before shoot day. Editor uses this as a still when his voice plays. Name label on screen: "Sam — NPG Coding, Canada."','H',false,true),
-      s('SOURCE: LAPTOP SCREEN RECORD — Before Sam connects, start a screen recording on the laptop. Runs the entire session. Separate from camera footage.','H',false,true),
-      s('SOURCE: AUDIO BACKUP — Set a second phone recording audio only near the laptop speaker, running the whole session.','H',false,true),
-      s('SOURCE: SCREENSHOT — Before closing the remote session window, take a full screenshot of Sam\'s remote UI.','H',false,true),
-    ]),
-
-    m('MID-MORNING — ★ CODING SESSION · Film Everything  ★ TIME-SENSITIVE','#E8460A',[
-      s('Sam\'s remote session on screen — phone propped aimed at the laptop screen, stationary. Let it run the entire session. Do not touch it.','H',false,true),
-      s('Annie + John watching the screen — tripod aimed at both from the front, stationary. Let it run the full session.','H',false,true),
-      s('Annie talking to Sam — phone set on a flat surface aimed at Annie\'s face, stationary. Let it run the entire call.','H',false,true),
-      s('John\'s hands on the laptop — phone propped on the bench aimed at his hands while the session loads. Stationary.','H',false,false),
-      s('★ THE MOMENT: audio cuts out — both cameras are already rolling. Do not touch them. Get your own reaction out of frame.','H',false,true),
-      s('★ SOCIAL LIFT (HOOK CANDIDATE): The silence reaction — Annie + John uncut, 10-15 seconds. Caption: "No sound means it worked." Vertical.','H',true,true),
-      s('Annie to camera immediately after silence: "No sound means it worked" — tripod aimed at Annie, stationary.','H',false,true),
-      s('★ SOCIAL LIFT (HOOK CANDIDATE): Annie to camera — "If you own a 2024 or newer Audi or VW, this affects you." 30 seconds. Vertical.','H',true,true),
-      s('Annie: first time doing SFD2 — what it means for Audi and VW owners everywhere','H',false,true),
-      s('Post-coding audio test — phone aimed at the head unit. Confirm silence is holding.','H',false,true),
-      s('Annie shoutout to Sam at NPG — name him on camera, explain what he figured out','H',false,true),
-      s('NOTE: You don\'t know yet which moment will be the hook. Capture all options. Decide in the edit.','H',false,false),
-    ]),
-
-    m('AFTERNOON — Rear Panel Removal · Access to Rear Shelf','#1A6B5A',[
-      s('Annie asks John on camera: "John, walk me through what needs to come out to get to the rear shelf"','H',false,true),
-      s('John explains the rear disassembly sequence — panels, order, why each one','H',false,true),
-      s('Battery disconnect — John disconnects negative terminal. Explains why before he does it.','H',false,true),
-      s('Rear seat base removal — how it comes out, what access it creates','H',false,true),
-      s('Rear shelf removal — set camera back on the bay and let it run for a time-lapse','H',false,true),
-      s('John\'s hands only — close-up during panel work. No face needed.','H',false,true),
-      s('Factory 4" rear deck speakers revealed — phone or tripod aimed into the rear shelf opening. Still shot.','H',false,true),
-      s('Factory 4" speaker removed — held up. This is what the 6x9 is replacing.','H',false,true),
-      s('What\'s behind the rear shelf — structure, bracing, space constraints for the 6x9','H',false,true),
-      s('HOW-TO: Panel tool technique — slow-down, John explains how to avoid cracking Audi interior clips','H',false,true),
-      s('Clips and fasteners organized in a tray — labeled. Satisfying detail shot.','H',false,true),
-    ]),
-
-    m('AFTERNOON — Factory SONOS Amp · Access, ID, Bypass','#1A6B5A',[
-      s('Annie asks John on camera: "Where is the factory SONOS amp and what are you doing with it?"','H',false,true),
-      s('John traces path to factory SONOS amp — names the location on camera','H',false,true),
-      s('Factory SONOS amp exposed — close-up, all connectors and harness visible','H',false,true),
-      s('Factory SONOS amp in position — clean close-up BEFORE any wire is touched. Critical before shot.','H',false,true),
-      s('Annie explains why the SONOS amp is being bypassed — what it does to the signal','H',false,true),
-      s('Factory speaker wires identified and labeled — 16 channels. John on camera counting them.','H',false,true),
-      s('★ SOCIAL LIFT (HOOK CANDIDATE): SONOS amp held up next to Helix V18 DSP — "This is what we\'re replacing it with." One shot. Vertical.','H',true,true),
-      s('SONOS amp removed — held up, named, set aside','H',false,true),
-      s('John\'s hands labeling wires — organized and methodical.','H',false,true),
-      s('Multimeter — John testing continuity on factory lines post-coding','H',false,true),
-      s('16-channel harness close-up — the complexity the Helix DSP is inheriting','H',false,true),
-      s('All 16 channels labeled — clean still reference shot.','H',false,true),
-      s('John explains the labeling process on camera — what happens if you get this wrong','H',false,true),
-    ]),
-
-    m('AFTERNOON — Afternoon Check-In  ★ SOCIAL','#1E5FA3',[
-      s('★ SOCIAL LIFT: Annie + John — coding worked, here\'s where the install stands. Both phones. Vertical.','H',true,true),
-      s('Annie solo — relief or still cautious? Her real take after the coding session.','H',false,false),
-      s('Shop life — Vicky and Annie at the counter, PJ in the background, natural moment','H',false,false),
-    ]),
-
-    m('EOD ★ — Cold Open / Intro  (Shoot last — Annie knows the full story now)','#E8460A',[
-      s('Annie to camera — 2026 Audi RS3, SFD2 protocol, what\'s in this car and why it matters','H',false,true),
-      s('Annie: what Paul complained about — "no presence, no life, coming from far away"','H',false,true),
-      s('Annie: the Zen V explained — signal before SONOS processing, in plain English','H',false,true),
-      s('Annie: the rear shelf plan — 4" out, 6x9 in, why the size difference changes everything','H',false,true),
-      s('Annie + John — she asks John what the hardest part of this build will be. His real answer.','H',false,true),
-      s('Annie: tease the reveal — "By the end of this, Paul gets a system that makes his daily commute feel different."','H',false,false),
-    ]),
-
-    m('EOD ★ — Step Tosses  (Same position, same framing — batch film)','#E8460A',[
-      s('NOTE: Same spot for every handoff. Batch back-to-back. Annie stays put, John moves.','H',false,true),
-      s('Annie asks John — "Walk us through what the coding session does to this RS3"','H',false,true),
-      s('Annie asks John — "What did you have to take apart to get to the rear shelf?"','H',false,true),
-      s('Annie asks John — "Where was the factory amp and what did you do with it?"','H',false,true),
-      s('Annie asks John — "Walk me through identifying 16 channels of factory wiring"','H',false,true),
-    ]),
-
-    m('EOD ★ — How-To: SFD2 Protocol  SOCIAL','#6B3FA0',[
-      s('★ SOCIAL LIFT: Annie: "If you own a 2024-or-newer Audi or VW and want to upgrade your audio — watch this." 30 seconds. Vertical.','H',true,true),
-      s('Annie explains SFD2 — what it locks, what the Zen V does, how Sam\'s coding unlocks it','H',true,true),
-      s('Annie: "No audio after coding means it worked" — the counterintuitive success signal','H',true,true),
-      s('Get shots of the coding screen, the OBD2 dongle plugged in, and the open laptop','H',false,true),
-    ]),
-
-    m('EOD ★ — How-To: Signal Before vs After the Factory Amp  SOCIAL','#6B3FA0',[
-      s('★ SOCIAL LIFT: Annie: "Here\'s why you want your signal BEFORE the factory amp processes it." 30 seconds. Vertical.','H',true,true),
-      s('Annie explains the Zen V — digital pre-amp adapter, clean signal, full control','H',true,true),
-      s('Get shots of the Zen V unit, the Helix DSP, and the wiring path between them','H',false,true),
-    ]),
-
-    m('EOD ★ — Pro Notes: First SFD2 Build  SOCIAL','#6B3FA0',[
-      s('★ SOCIAL LIFT: Annie: "First time doing SFD2. Here\'s what we didn\'t know going in." Peer-to-peer. Vertical.','H',true,true),
-      s('Annie: "Sam at NPG is the only person we know who cracked this" — genuine shoutout','H',true,true),
-      s('Annie: educated guesses on factory speaker sizes — what they know vs what they\'re figuring out live','H',true,true),
-      s('John: one specific thing that surprised him during the rear panel work','H',true,false),
-      s('Annie: broader impact — remote starters, mirror fold coding, anywhere SFD2 blocks aftermarket','H',true,false),
-    ]),
-
-    m('EOD ★ — Day 1 Recap  SOCIAL','#1E5FA3',[
-      s('★ SOCIAL LIFT: Annie + John — counter, both phones running. Coding worked. What\'s next. Vertical.','H',true,true),
-      s('John solo — bay. The coding win. What Day 2 looks like.','H',true,true),
-      s('Annie solo — her honest take on Day 1.','H',true,true),
-    ]),
-
-    m('EOD — Annie\'s VO Recap','#E8460A',[
-      s('Annie solo — narrates Day 1 in present tense: coding outcome, panels pulled, SONOS out, what\'s next','H',false,true),
-    ]),
-
-    m('ANYTIME — Day 1 Grabs · Grab Whenever Light & Access Allow','#0369A1',[
-      s('Helix V Eighteen DSP — clean surface, good light, 18 channels visible','ANYTIME',false,true),
-      s('Sony XS-690ES 6x9 next to factory 4" — size comparison. Clean surface.','ANYTIME',false,true),
-      s('NAV TV Zen V (NTV-KIT860) — connectors visible, clean light','ANYTIME',false,true),
-      s('NAV TV Zen V — straight-on shot of the front face.','ANYTIME',false,true),
-      s('NAV TV Zen V — cable end detail.','ANYTIME',false,true),
-      s('NAV TV Zen V — rear connector side.','ANYTIME',false,true),
-      s('NAV TV Zen V — held in hand for scale reference.','ANYTIME',false,false),
-      s('OBD2 dongle — simple, clean. The object that unlocked the car.','ANYTIME',false,true),
-      s('Factory 4" speaker alone on bench — before it disappears','ANYTIME',false,true),
-      s('Shop signage — Sounds Incredible exterior and interior branding','ANYTIME',false,true),
-      s('Shop life — Vicky + Annie at the counter, PJ in background, natural rhythm','ANYTIME',false,false),
-      s('John at his bench — working, unaware of camera.','ANYTIME',false,false),
-    ]),
-  ]},
-
-  // ════════════════════════════════════════════════════════
-  // DAY 2 — 3/12 — CUSTOM FAB & MAIN INSTALL
-  // ════════════════════════════════════════════════════════
-  {id:'d2',num:2,open:false,locked:false,name:'Day 2 — 3/12 · Custom Fab & Main Install',color:'#2D1B4E',moments:[
-
-    m('MORNING — Shop Opens · Day 2 Atmosphere','#0369A1',[
-      s('Shop exterior — morning shot. Different time of day than Day 1 if possible.','H',false,true),
-      s('RS3 sitting in the bay — partially disassembled from yesterday. Evocative.','H',false,true),
-      s('John arrives at the car — assesses where he left off. Let him look before he talks.','H',false,true),
-    ]),
-
-    m('MORNING — Morning Check-In  ★ SOCIAL','#1E5FA3',[
-      s('★ SOCIAL LIFT: Annie + John — John\'s plan: rear shelf fab, Sony 6x9s, Zen V, Helix mount. Both phones. Vertical.','H',true,true),
-      s('NOTE: Get Vicky visible in the background if possible — shop week context.','H',false,false),
-      s('John solo in the bay — "Here\'s what I\'m getting into today"','H',true,true),
-      s('Annie solo — her look-ahead for Day 2','H',true,true),
-    ]),
-
-    m('MID-MORNING — Rear Shelf Custom Fabrication · 4" to 6x9  ★ KEY MOMENT','#B45309',[
-      s('Annie asks John on camera: "John, walk me through going from a 4-inch factory opening to a 6x9"','H',false,true),
-      s('John explains the challenge — 4" hole vs 6x9 footprint, what has to happen to make it look clean','H',false,true),
-      s('John measures the rear shelf — tape measure, exact dimensions on camera','H',false,true),
-      s('Sony XS-690ES held up to the shelf opening — size mismatch visible before any cutting','H',false,true),
-      s('John marks the cut lines — how to avoid structural bracing in this specific shelf','H',false,true),
-      s('Cutting process — phone propped stationary aimed at the work area. John explains technique while he works.','H',false,true),
-      s('Set camera back on the full workspace and let it run — time-lapse of the whole fabrication','H',false,true),
-      s('★ SOCIAL LIFT: Before/after rear shelf opening — same angle, 4" hole then finished 6x9 cut. Cut together. Vertical.','H',true,true),
-      s('Custom fit check — Sony 6x9 test-fitted in new opening before mounting','H',false,true),
-      s('★ SOCIAL LIFT + HONEST MOMENT: Aftermarket Sony grille on rear shelf — Annie\'s on-camera take. She\'s not sure about it. Let that honesty land.','H',true,true),
-      s('HOW-TO CLIP: "Here\'s how you cut a clean 6x9 opening in an Audi rear shelf" — John to camera','H',true,true),
-    ]),
-
-    m('MID-MORNING — Sony XS-690ES Installation · Rear Shelf','#1A6B5A',[
-      s('Annie asks John on camera: "Walk me through getting these 6x9s in"','H',false,true),
-      s('Annie explains why Sony XS-690ES — what they deliver for this specific job','H',false,true),
-      s('John\'s hands wiring the speaker — terminals, polarity confirmed. Close-up only.','H',false,true),
-      s('Speaker dropping into the custom opening — phone propped aimed at the opening, stationary.','H',false,false),
-      s('Speaker seated and secured — close-up, final fit','H',false,true),
-      s('Grille on — how it looks in context. Annie\'s real assessment.','H',false,true),
-      s('★ SOCIAL LIFT: Factory 4" vs Sony XS-690ES 6x9 — held up side by side. Before/after in one shot. No words needed. Vertical.','H',true,true),
-      s('Factory speaker next to the Sony XS-690ES 6x9 BOX — box alone shows the scale jump','H',false,true),
-      s('John explains what the size difference means for rear fill — on camera','H',false,true),
-      s('Individual speaker test before reassembly — confirm working in isolation','H',false,true),
-      s('Rear shelf before/after — same angle, same light: factory 4" in place first, then Sony 6x9 grille installed.','H',false,true),
-    ]),
-
-    m('MID-MORNING — NAV TV Zen V (NTV-KIT860) · Installation','#1A6B5A',[
-      s('Annie asks John on camera: "Walk me through the Zen V — what does it do and where does it live?"','H',false,true),
-      s('Annie explains Zen V role — grabs clean digital signal before SONOS processes it','H',false,true),
-      s('John shows where Zen V sits in the signal chain — physical placement on camera','H',false,true),
-      s('Zen V connections at the harness — close-up, each connector seated','H',false,true),
-      s('John explains the Zen V connection on camera — what it is doing in the signal chain','H',false,true),
-      s('Signal path walkthrough — John traces: factory head unit → Zen V → Helix DSP. Finger-trace close-up.','H',false,true),
-    ]),
-
-    m('AFTERNOON — Helix V Eighteen DSP · Custom Mount & Install','#1A6B5A',[
-      s('Annie asks John on camera: "Tell me about where the Helix DSP lives and how it connects to everything"','H',false,true),
-      s('Annie explains Helix V Eighteen — 18 channels, what each covers in the RS3, why this unit','H',false,true),
-      s('Custom amp mount fabrication — John explains the placement decision before he starts','H',false,true),
-      s('Amp mount build — set camera on it and let it run for a time-lapse','H',false,true),
-      s('John\'s hands fabricating — close-up detail only. The work itself.','H',false,true),
-      s('Finished amp rack — clean shot — before the Helix goes on. The fabrication deserves its own moment.','H',false,true),
-      s('John with the finished rack — explains the build and placement decision on camera','H',false,true),
-      s('Helix DSP seated on custom mount — close-up before wiring','H',false,true),
-      s('18-channel connections at the Helix — systematic close-up pass through all outputs','H',false,true),
-      s('RCA connections from Zen V to Helix — each channel seated, clean','H',false,true),
-      s('Power wire terminated at Helix — close-up','H',false,true),
-      s('All connections made — full visual sweep before power-on','H',false,true),
-      s('John gestures to the mounted Helix and explains the routing logic from this position','H',false,true),
-      s('★ SOCIAL LIFT: Custom amp mount reveal — Helix mounted, all connections clean. "18 channels of control." Vertical.','H',true,true),
-    ]),
-
-    m('AFTERNOON — Wire Routing · Hidden Behind Every Trim Piece','#1A6B5A',[
-      s('Annie asks John on camera: "How are you routing and hiding all this new wiring?"','H',false,true),
-      s('John explains the full routing plan before he starts — Zen V to Helix to rear shelf','H',false,true),
-      s('Wire routing — set camera back on the wiring area and let it run for a time-lapse','H',false,true),
-      s('Slow-down: John tucks wire behind trim — technique close-up','H',false,true),
-      s('★ WIRE ORGANIZATION BEAUTY SHOT: All new cables laid out and labeled before they disappear behind trim.','H',false,true),
-      s('Ground point — John selects it, cleans the metal surface, explains why this spot','H',false,true),
-      s('Completed wire run visible before trim goes back on','H',false,true),
-      s('Close-up of a key routing point — wire going under carpet or through a panel. The hidden work.','H',false,true),
-      s('Cable management — tie wraps securing the run so nothing rattles','H',false,true),
-      s('Speaker polarity check — John confirms +/- at the connector before it seats','H',false,true),
-    ]),
-
-    m('AFTERNOON — Afternoon Check-In  ★ SOCIAL','#1E5FA3',[
-      s('★ SOCIAL LIFT: Annie + John — honest read on custom fab progress. What happened vs what was planned. Vertical.','H',true,true),
-      s('Shop life — constant interruptions from Vicky and Annie asking PJ and John questions. Let it breathe.','H',false,false),
-    ]),
-
-    m('EOD ★ — Step Tosses  (Same position, same framing — batch film)','#E8460A',[
-      s('NOTE: Same spot each time. Batch back-to-back. Efficient.','H',false,true),
-      s('Annie asks John — "Walk us through going from a 4-inch to a 6x9"','H',false,true),
-      s('Annie asks John — "Walk me through getting these speakers in"','H',false,true),
-      s('Annie asks John — "Walk me through the Zen V — what does it do?"','H',false,true),
-      s('Annie asks John — "Tell me about where the Helix lives and how it all connects"','H',false,true),
-      s('Annie asks John — "How are you hiding all this new wiring?"','H',false,true),
-    ]),
-
-    m('EOD ★ — How-To: Rear Shelf Fabrication  SOCIAL','#6B3FA0',[
-      s('★ SOCIAL LIFT: John to camera — measure, mark, cut, fit. Self-contained 30-second sequence. Vertical.','H',true,true),
-      s('John: the specific challenge of a clean cut without hitting structure in this shelf','H',true,true),
-      s('Before/after in same clip — 4" hole, then the finished 6x9 opening','H',true,true),
-    ]),
-
-    m('EOD ★ — Car Feature Segment  SOCIAL','#6B3FA0',[
-      s('★ SOCIAL LIFT: Annie: "2026 Audi RS3. White. Factory SONOS system. Here\'s why it needed all of this." 45 seconds. Vertical.','H',true,true),
-      s('Annie: the system upgrade in plain English — what Paul wanted vs what\'s going in','H',true,true),
-      s('★ SOCIAL LIFT: Factory 4" vs Sony XS-690ES 6x9 side-by-side — phone on tripod vertical, stationary.','H',true,true),
-      s('Get shots of the RS3 exterior, the rear shelf work, and the Helix DSP mounted and wired','H',false,true),
-    ]),
-
-    m('EOD ★ — Day 2 Recap  SOCIAL','#1E5FA3',[
-      s('★ SOCIAL LIFT: Annie + John — counter, both phones. Custom fab done, everything mounted, what\'s left. Vertical.','H',true,true),
-      s('John solo — bay. His honest take on the rear shelf fabrication.','H',true,true),
-      s('Annie solo — her honest Day 2 take.','H',true,true),
-    ]),
-
-    m('EOD — Annie\'s VO Recap','#E8460A',[
-      s('Annie solo — narrates Day 2: fab outcome, what\'s installed, Day 3 plan (tuning + reveal)','H',false,true),
-    ]),
-
-    m('ANYTIME — Day 2 Grabs','#0369A1',[
-      s('Helix V18 DSP mounted in car — beauty shot in context, power LED on','ANYTIME',false,true),
-      s('Sony XS-690ES in rear shelf — grille on, clean close-up','ANYTIME',false,true),
-      s('Sony XS-690ES — grille off, cone and surround visible if possible','ANYTIME',false,true),
-      s('Custom amp mount — multiple angles before anything closes up over it','ANYTIME',false,true),
-      s('Rear shelf same-angle pair — 4" opening (from yesterday) vs finished 6x9 cut. Get both.','ANYTIME',false,true),
-      s('John\'s workbench — tools organized before a step. Texture shot.','ANYTIME',false,false),
-    ]),
-  ]},
-
-  // ════════════════════════════════════════════════════════
-  // DAY 3 — 3/13 — TUNING, REASSEMBLY & REVEAL
-  // ════════════════════════════════════════════════════════
-  {id:'d3',num:3,open:false,locked:false,name:'Day 3 — 3/13 · Tuning, Reassembly & Reveal',color:'#3B1E08',moments:[
-
-    m('MORNING — Shop Opens · Day 3 Atmosphere','#0369A1',[
-      s('Shop exterior — morning shot. Should feel different from Day 1.','H',false,true),
-      s('RS3 in the bay — panels off, system installed but not yet closed up. A car mid-surgery.','H',false,true),
-      s('Annie looking at the car before John arrives — quiet moment','H',false,true),
-    ]),
-
-    m('MORNING — Morning Check-In  ★ SOCIAL','#1E5FA3',[
-      s('★ SOCIAL LIFT: Annie + John — today is tuning and reveal day. The energy should be different. Vertical.','H',true,true),
-      s('John solo — "Here\'s what tuning 18 channels looks like for a system like this"','H',true,true),
-      s('Annie solo — anticipation. Paul arrives today. That\'s real pressure.','H',true,true),
-    ]),
-
-    m('MID-MORNING — First Power-On & System Test  ★ TIME-SENSITIVE','#B45309',[
-      s('Battery reconnected — film the moment. John\'s hand on the terminal.','H',false,true),
-      s('Head unit screen booting up — close-up as it comes to life.','H',false,true),
-      s('★ FIRST POWER-ON — John\'s face the moment it comes to life. Film his reaction, not the screen.','H',false,true),
-      s('John checks rear shelf 6x9s — both sides working','H',false,true),
-      s('John checks all other speaker zones — systematic pass','H',false,true),
-      s('Annie hears it for the first time — her real, unscripted reaction','H',false,true),
-      s('If John finds an issue and has to fix it — let that happen on camera. Don\'t cut away.','H',false,false),
-    ]),
-
-    m('MID-MORNING — DSP Tuning · Helix V Eighteen','#B45309',[
-      s('Annie asks John on camera: "John, walk me through what you\'re tuning for"','H',false,true),
-      s('★ SOCIAL LIFT: Annie to camera — "Here\'s what DSP tuning actually does for the person sitting in this seat." 30 seconds. Vertical.','H',true,true),
-      s('John at the laptop with the car visible behind him — tripod to the side so both laptop screen and car interior are in frame together. Stationary.','H',false,true),
-      s('John explains what he\'s adjusting and what he\'s listening for in the RS3','H',false,true),
-      s('Tuning session — let the camera run on John at the laptop, slow down for key moments','H',false,true),
-      s('John: tuning for rear fill — what a balanced sound stage means in this specific car','H',false,true),
-      s('Annie in the listening seat during tuning — her real-time reactions as it comes together','H',false,false),
-      s('★ SOCIAL LIFT: Before/after audio demo — phone on tripod aimed at Annie in the listening seat. Play 5 seconds before a tune adjustment, then 5 seconds after. Annie narrates the difference. Record both back to back in the same clip.','H',true,true),
-      s('RTA or measurement curve on the Helix software screen — before and after a correction. Visual proof of what tuning does.','H',false,true),
-      s('HOW-TO: "Here\'s how we tune 18 channels for a factory-integrated system" — John to camera','H',true,true),
-    ]),
-
-    m('AFTERNOON — Reassembly','#2D6A4F',[
-      s('Rear shelf going back in — set camera in the same spot as Day 1 removal and let it run','H',false,true),
-      s('Rear seat base back in — clean','H',false,true),
-      s('★ NOTE FOR EDIT: This reassembly time-lapse cuts against the disassembly time-lapse from Day 1. Make sure both angles match.','H',false,true),
-      s('Interior fully put back together — clean shots before Paul arrives. Cabin looks stock. System invisible.','H',false,true),
-      s('Rear shelf with Sony grilles installed and interior buttoned up — final after shot. Match Day 1 before angle exactly.','H',false,true),
-      s('John checks each panel for rattle — press and listen, systematic pass','H',false,false),
-      s('Sill plates and trim confirmed — nothing pinched','H',false,true),
-    ]),
-
-    m('AFTERNOON — Afternoon Check-In  ★ SOCIAL','#1E5FA3',[
-      s('★ SOCIAL LIFT: Annie + John — system is in, tuning done, Paul incoming. Vertical.','H',true,true),
-      s('John solo — his honest read on how tuning went','H',true,true),
-      s('Annie solo — reveal day energy. Real.','H',true,true),
-    ]),
-
-    m('AFTERNOON — NOTE: Confirm Paul\'s Camera Status Before Staging','#F59E0B',[
-      s('RESOLVE BEFORE PAUL ARRIVES: His intake says "open to it." Annie\'s says "VO only." These conflict. Call it now — it changes how you stage everything.','H',false,true),
-      s('If Paul IS on camera: two cameras in the car, exterior phone propped, Annie in passenger seat','H',false,false),
-      s('If Paul is NOT on camera: Annie does the reveal reaction herself — no filming of Paul\'s face','H',false,false),
-    ]),
-
-    m('LATE AFTERNOON — Reveal Staging · Before Paul Arrives','#2D6A4F',[
-      s('RS3 staged — bay or out front, clean, no clutter in frame','H',false,true),
-      s('Two cameras set up inside the car — per Annie\'s intake plan','H',false,true),
-      s('Exterior phone propped at window level for panel vibration shot','H',false,false),
-      s('Annie on camera: "Here\'s how we\'re staging this reveal" — brief, direct','H',false,true),
-      s('RS3 exterior — same angles as Day 1 arrival shots for match-cut.','H',false,true),
-      s('Annie — anticipation beat to camera before Paul arrives. Three days in. Let that land.','H',false,true),
-      s('John final wipe-down — real prep, not for show','H',false,false),
-      s('★ TEASE SHOT: Car sitting clean, music audible from inside but no reaction visible yet. 5 seconds. This goes in the hook.','H',true,true),
-      s('Interior of the car with music playing and nobody inside — speaker grilles visible, bass moving the air.','H',false,true),
-    ]),
-
-    m('LATE AFTERNOON — ★ THE FIRST LISTEN  ★ TIME-SENSITIVE  SOCIAL','#6B3FA0',[
-      s('Paul in driver seat, Annie in passenger. TWO phones running before the door closes.','H',false,true),
-      s('First track starts — tripod set inside aimed at the driver seat. Phone propped outside aimed at the window. Both rolling before the music starts. Do not touch either camera. Let everything run until the song ends or Paul reacts.','H',true,true),
-      s('Paul\'s face — one camera aimed at the driver seat from the passenger side, stationary. Leave it there for the entire first listen. Do not adjust.','H',true,true),
-      s('Annie alongside Paul — her genuine reaction, not performed','H',false,true),
-      s('Exterior — body panels reacting. Phone propped outside level with the window.','H',false,true),
-      s('★ SOCIAL LIFT: Uncut first listen reaction — 30-60 seconds, no narration. The reaction IS the content. Vertical.','H',true,true),
-      s('First words after the music — catch them. Whatever comes out is the quote.','H',false,true),
-      s('Annie demonstrating front vs rear fill — points to front then rear shelf while music plays.','H',false,true),
-      s('Annie and Paul — wide two-shot in the car, both listening.','H',false,true),
-      s('SONGS: Pink Floyd, Toto, or Phil Collins "Mama" — Paul\'s 3 choices, all well-mastered per his intake','H',false,false),
-    ]),
-
-    m('LATE AFTERNOON — Annie Addresses Paul\'s Complaints · On Camera','#E8460A',[
-      s('Annie: "You told me it sounded like it was coming from far away — listen to this now"','H',false,true),
-      s('Annie: "You said everything was only up front — here\'s what changed"','H',false,true),
-      s('Annie walks through the enveloping sound stage Paul described wanting','H',false,true),
-      s('Paul in his own words — what he\'s hearing. No prompts. Hold the camera.','H',false,true),
-      s('Any quotable moment — both cameras already rolling. Nothing to do. Let it happen.','H',false,true),
-      s('★ Paul\'s wife joke if it comes up naturally — in his intake. Don\'t force it. If it happens, it\'s gold.','H',false,false),
-      s('"Release of stress on the way home" — Paul wrote this in his intake. If he says it without prompting, that\'s the thumbnail quote.','H',false,false),
-    ]),
-
-    m('LATE AFTERNOON — John Joins the Car · Technical Debrief','#2D6A4F',[
-      s('John gets in the back or leans in at the window','H',false,true),
-      s('John walks through the SFD2 coding challenge — what it was, how Sam solved it','H',false,true),
-      s('John: the rear shelf fabrication — what it physically took to go from 4" to 6x9','H',false,true),
-      s('Paul asks John a question — natural, unscripted. Whatever he asks is what he asks.','H',false,true),
-      s('Annie facilitates — keeps it accessible and on camera','H',false,false),
-    ]),
-
-    m('LATE AFTERNOON — Paul\'s Final Word  ★ TIME-SENSITIVE','#1A6B5A',[
-      s('Paul: what this build means — how the daily commute will change','H',false,true),
-      s('Paul final take — unscripted. Don\'t prompt. Don\'t rush.','H',false,true),
-      s('★ SOCIAL LIFT: Paul walking to the RS3 — tripod set wide outside, stationary.','H',true,false),
-      s('RS3 pulls out of the bay — tripod set wide outside, stationary. Keep rolling until the car is fully out of frame.','H',false,true),
-    ]),
-
-    m('LATE AFTERNOON — Annie\'s Sign-Off · After Paul Leaves  ★ SOCIAL','#E8460A',[
-      s('Annie to camera immediately after Paul leaves — emotion is real, shoot it now before it cools','H',false,true),
-      s('Annie: honest takeaway — first SFD2 build, what it means for future Audi/VW customers','H',false,true),
-      s('Annie: shoutout to Sam at NPG — name him, explain what he cracked, why it matters to the industry','H',false,true),
-      s('★ SOCIAL LIFT: Annie: engagement CTA — PLACEHOLDER: specific question for THIS build once Annie decides. Vertical.','H',true,true),
-      s('Annie: blog CTA — "I broke down the full signal chain and the coding process — link in description"','H',false,true),
-      s('Annie: standard CTAs — book an install, subscribe, watch next video','H',false,true),
-      s('Annie: upcoming video tease — PLACEHOLDER: fill in from cta_upcoming once decided','H',false,false),
-    ]),
-
-    m('EOD ★ — Day 3 Recap  SOCIAL','#1E5FA3',[
-      s('★ SOCIAL LIFT: Annie + John — counter, both phones. The full build done. Paul heard it. Vertical.','H',true,true),
-      s('John solo — bay. His honest take on the build start to finish.','H',true,true),
-      s('Annie solo — what this first SFD2 build meant.','H',true,true),
-    ]),
-
-    m('EOD — Annie\'s VO Recap','#E8460A',[
-      s('Annie solo — narrates Day 3: tuning outcome, reassembly, the first listen, Paul\'s reaction, what\'s next','H',false,true),
-    ]),
-
-    m('ANYTIME — Day 3 Grabs','#0369A1',[
-      s('RS3 exterior beauty — match Day 1 before angles exactly. Front corner, back corner, both sides.','ANYTIME',false,true),
-      s('Rear shelf AFTER — Sony XS-690ES grilles in situ. Same angle as Day 1 factory 4" before shot.','ANYTIME',false,true),
-      s('Dashboard — factory SONOS head unit still in place. Shows the system is invisible from the driver seat.','ANYTIME',false,true),
-      s('Annie with the RS3 — natural, not posed','ANYTIME',false,false),
-      s('John with the RS3 — he built it. Let him stand next to it.','ANYTIME',false,false),
-    ]),
-  ]},
-
-  // ════════════════════════════════════════════════════════
-  // REVEAL DAY — PAUL'S PICKUP (if separate from Day 3)
-  // ════════════════════════════════════════════════════════
-  {id:'d-reveal',num:99,open:false,locked:true,name:'Reveal Day — Paul\'s First Listen',color:'#3B1E08',moments:[
-
-    m('NOTE — Confirm Paul\'s Camera Status Before Staging','#F59E0B',[
-      s('CONFIRM WITH ANNIE: Paul\'s intake says "open to it." Annie\'s intake says "VO only." Resolve this before Paul arrives.','H',false,true),
-    ]),
-
-    m('MORNING — Morning Check-In  ★ SOCIAL','#1E5FA3',[
-      s('★ SOCIAL LIFT: Annie + John — reveal day. Paul is coming in today. Vertical.','H',true,true),
-      s('Annie solo — anticipation. What she\'s hoping Paul says when he hears it.','H',true,true),
-      s('John solo — his one-line take before the client walks in','H',true,true),
-    ]),
-
-    m('MORNING — Staging · Before Paul Arrives','#2D6A4F',[
-      s('RS3 staged — bay or out front, clean, no clutter in frame','H',false,true),
-      s('Two cameras set up inside the car','H',false,true),
-      s('Exterior phone propped at window level','H',false,false),
-      s('★ TEASE SHOT: Car sitting clean, music audible from inside but no reaction visible. 5 seconds. For the hook.','H',true,true),
-      s('John final wipe-down — real prep','H',false,false),
-    ]),
-
-    m('MID-MORNING — Paul Arrives  ★ TIME-SENSITIVE','#1A6B5A',[
-      s('Paul arriving — tripod set wide outside facing the entrance, stationary. Let him walk into frame.','H',false,true),
-      s('Annie greets Paul at the door','H',false,true),
-      s('Walking toward the RS3 — Annie on the outside, car revealed behind them','H',false,true),
-      s('Paul sees the car staged — his face before he hears a note','H',false,true),
-    ]),
-
-    m('MID-MORNING — Reveal Setup · Annie to Camera  ★ TIME-SENSITIVE','#E8460A',[
-      s('Annie to camera — sets up what\'s about to happen. Brief, direct, stakes clear.','H',false,true),
-      s('Annie asks Paul: "What was the biggest complaint you had before you came in?" — on camera','H',false,true),
-      s('Annie walks through each complaint and what they did to address it','H',false,true),
-    ]),
-
-    m('MID-MORNING — ★ THE FIRST LISTEN  ★ TIME-SENSITIVE  SOCIAL','#6B3FA0',[
-      s('Paul in driver seat, Annie in passenger. Two phones running before door closes.','H',false,true),
-      s('First track — tripod inside aimed at driver seat, phone propped outside aimed at the window. Both rolling before the music starts. Let everything run. Do not touch either camera.','H',true,true),
-      s('Paul\'s face — close. Not the speakers. The face.','H',true,true),
-      s('★ SOCIAL LIFT: Uncut first listen — 30-60 seconds, no narration. The reaction is the content. Vertical.','H',true,true),
-      s('Exterior — body panels reacting. Phone propped outside level with window.','H',false,true),
-      s('Annie alongside Paul — genuine reaction','H',false,true),
-      s('First words — catch them','H',false,true),
-      s('SONGS: Pink Floyd, Toto, Phil Collins "Mama" — Paul\'s choices. All well-mastered per his intake.','H',false,false),
-    ]),
-
-    m('MID-MORNING — Paul\'s Reaction · Let It Run','#E8460A',[
-      s('Annie: "You said it sounded like it was coming from far away — listen to this now"','H',false,true),
-      s('Annie: "You said everything was only up front — here\'s what changed"','H',false,true),
-      s('Paul in his own words. No prompts. Hold the camera.','H',false,true),
-      s('Any moment Paul surprises you — cameras are already rolling. Nothing to do. Let it happen.','H',false,true),
-      s('"Release of stress on the way home" — Paul wrote this in his intake. If he says it, that\'s the thumbnail quote.','H',false,false),
-      s('Wife joke if it comes up — in his intake. Don\'t plant it.','H',false,false),
-    ]),
-
-    m('AFTERNOON — Paul\'s Final Word  ★ TIME-SENSITIVE','#1A6B5A',[
-      s('Paul: what this build means for his daily drive','H',false,true),
-      s('Paul final take — unscripted. Don\'t rush.','H',false,true),
-      s('★ SOCIAL LIFT: Paul walks to the RS3, gets in, pulls out — tripod set wide outside, stationary. Keep rolling until he is fully gone.','H',true,false),
-      s('RS3 pulls out — tripod set wide outside, stationary. Keep rolling until the car is fully gone.','H',false,true),
-    ]),
-
-    m('AFTERNOON — Afternoon Check-In  ★ SOCIAL','#1E5FA3',[
-      s('★ SOCIAL LIFT: Annie + John — after Paul leaves. How did the reveal go? Unscripted. Vertical.','H',true,true),
-      s('Annie solo — immediate honest reaction while the feeling is still live','H',true,true),
-      s('John solo — his read on how the reveal landed','H',true,true),
-    ]),
-
-    m('AFTERNOON — Annie\'s Sign-Off · After Paul Leaves  ★ SOCIAL','#E8460A',[
-      s('Annie to camera immediately after Paul leaves — emotion real, shoot now','H',false,true),
-      s('Annie: honest takeaway — first SFD2 build, what it opens up for future customers','H',false,true),
-      s('Annie: shoutout to Sam at NPG — name him, explain what he cracked','H',false,true),
-      s('★ SOCIAL LIFT: Annie engagement CTA — PLACEHOLDER: specific question for THIS build. Vertical.','H',true,true),
-      s('Annie: blog CTA — "Full signal chain and coding process — link in description"','H',false,true),
-      s('Annie: standard CTAs — book an install, subscribe, watch next video','H',false,true),
-    ]),
-
-    m('EOD ★ — Reveal Day Recap  SOCIAL','#1E5FA3',[
-      s('★ SOCIAL LIFT: Annie + John — end of the build, the full arc, what this RS3 sounds like now. Vertical.','H',true,true),
-      s('John solo — what he\'s most proud of on this build','H',true,true),
-      s('Annie solo — what she\'ll remember about this one','H',true,true),
-    ]),
-
-    m('EOD — Annie\'s VO Recap','#E8460A',[
-      s('Annie solo — narrates the reveal: Paul\'s reaction, what he said, what this build accomplished','H',false,true),
-    ]),
-  ]},
-
-  // ════════════════════════════════════════════════════════
-  // PICKUP DAY — MISSED SHOTS & REMAINING CAPTURES
-  // ════════════════════════════════════════════════════════
-  {id:'d-pickup',num:100,open:false,locked:true,name:'Pickup Day — Missed Shots & Remaining Captures',color:'#2D4A1E',moments:[
-
-    m('NOTE — What This Day Is For','#F59E0B',[
-      s('No client. No time pressure. This day exists to get everything that was missed during the build.','H',false,false),
-      s('Work through in any order. Cross-reference the shot list — anything unchecked from Days 1-3 and Reveal Day belongs here.','H',false,false),
-      s('The EOD carry-forward list from any day will also appear here automatically if it was flagged during the build.','H',false,false),
-    ]),
-
-    m('Missed Install Process Shots','#1A6B5A',[
-      s('Any install step that was not captured during the build — check the Day 1-3 shot lists and identify gaps.','H',false,true),
-      s('Panel removal or reassembly if time-lapse was missed — phone propped wide, stationary, let it run.','H',false,true),
-      s('Wire routing close-ups if not captured during the build — phone propped aimed at the routing path.','H',false,true),
-      s('Any harness, connector, or fabrication detail that was skipped — John to camera explaining the step.','H',false,true),
-    ]),
-
-    m('Missed Before/After Shots','#8B1A1A',[
-      s('Rear shelf — factory 4" position vs Sony XS-690ES grille installed. Same angle, same light.','H',false,true),
-      s('Helix DSP mounted — if the beauty shot in context was missed during the build, get it now.','H',false,true),
-      s('Any exterior RS3 angle that did not match the Day 1 before angle — get it now for the match cut.','H',false,true),
-    ]),
-
-    m('Missed Product Shots','#B45309',[
-      s('Any product from the bench list not captured — Helix, Sony, Zen V, OBD2 dongle.','ANYTIME',false,true),
-      s('Factory 4" speaker alone on bench if not already captured — before it is disposed of.','ANYTIME',false,true),
-      s('Any tool close-up that was missed — panel tool, multimeter, laptop with Helix software open.','ANYTIME',false,true),
-    ]),
-
-    m('Missed Annie or John On-Camera Pieces','#E8460A',[
-      s('Any handoff that was not captured on EOD — Annie asks John, same spot.','H',false,true),
-      s('Any How-To clip that was flagged but not filmed — John to camera, 30 seconds, stationary.','H',false,true),
-      s('Pro Notes if not yet filmed — Annie straight to lens, peer-to-peer tone.','H',false,true),
-      s('Car Feature segment if RS3 is still accessible — Annie to camera, exterior shots.','H',false,true),
-    ]),
-
-    m('EOD ★ — Pickup Day Wrap  SOCIAL','#1E5FA3',[
-      s('★ SOCIAL LIFT: Annie to camera — everything is captured, video is going into edit. Vertical.','H',true,true),
-      s('Annie: what this build was, what it means, when it drops — the pre-release tease.','H',true,true),
-    ]),
-  ]},
-
-  // ════════════════════════════════════════════════════════
-  // POST-WRAP — VO, PRODUCT SHOTS & STANDALONE CLIPS
-  // No car needed. After the RS3 leaves.
-  // ════════════════════════════════════════════════════════
-  {id:'d-postwrap',num:101,open:false,locked:true,name:'Post-Wrap — VO, Products & Standalone Clips',color:'#1A1D26',moments:[
-
-    m('NOTE — No Car Needed for Any of This','#F59E0B',[
-      s('Everything here is bench work, Annie solo, or John solo. The RS3 does not need to be present.','H',false,false),
-      s('Batch by setup: all product shots together, all Annie-to-camera together, all John to camera together.','H',false,false),
-    ]),
-
-    m('MORNING — Morning Check-In  SOCIAL','#1E5FA3',[
-      s('★ SOCIAL LIFT: Annie to camera — what\'s getting done today in post-wrap. No car, bench work. Sets expectations. Vertical.','H',true,true),
-      s('John solo — what he\'s recording or capturing today','H',true,false),
-    ]),
-
-    m('Annie\'s VO Recording — Batch by Section','#E8460A',[
-      s('VO: Hook and cold open — Annie narrates over footage in present tense','H',false,true),
-      s('Annie — client brief to camera: Paul\'s story, the Walkman quote, what he wanted from this system. Vertical + horizontal.','H',false,true),
-      s('Annie — product walkthrough to camera: one product at a time, each held or indicated. Named, explained, why chosen. Vertical + horizontal.','H',false,true),
-      s('VO: SFD2 explanation — what it locks, what the Zen V does, why coding first','H',false,true),
-      s('VO: Products walkthrough — Helix V18, Sony XS-690ES, Zen V, each named and explained','H',false,true),
-      s('VO: Day 1 narration — coding session, SONOS amp bypass, rear panel work','H',false,true),
-      s('VO: Day 2 narration — rear shelf fab, 6x9 in, Zen V and Helix mounted','H',false,true),
-      s('VO: Day 3 narration — tuning session, what 18 channels of DSP means in this car','H',false,true),
-      s('VO: Reveal narration — what Paul said, what changed, the first listen','H',false,true),
-      s('VO: Outro and CTAs — record last, once Annie knows what she actually wants to say','H',false,true),
-      s('NOTE: Record in sections, not one long take. Each section = one clip, labeled to match the shot list.','H',false,false),
-    ]),
-
-    m('Product Beauty Shots — Bench Only','#B45309',[
-      s('Helix V Eighteen DSP — clean surface, good light, 18 channels visible. Multiple angles.','ANYTIME',false,true),
-      s('Helix V Eighteen DSP — front face hero. Straight on, label readable.','ANYTIME',false,true),
-      s('Helix V Eighteen DSP — angled shot showing the depth and how it is built.','ANYTIME',false,true),
-      s('Helix V Eighteen DSP — rear panel showing all connection density.','ANYTIME',false,true),
-      s('Helix V Eighteen DSP — close-up of channel count label or spec plate.','ANYTIME',false,true),
-      s('Sony XS-690ES 6x9 — grille off, cone and surround visible. Close-up.','ANYTIME',false,true),
-      s('Sony XS-690ES 6x9 — front grille clean shot.','ANYTIME',false,true),
-      s('Sony XS-690ES 6x9 — side profile showing depth.','ANYTIME',false,true),
-      s('Sony XS-690ES 6x9 — rear magnet. Build quality shot.','ANYTIME',false,true),
-      s('Sony XS-690ES 6x9 — unboxing moment if available.','ANYTIME',false,false),
-      s('★ SOCIAL LIFT: Sony XS-690ES 6x9 vs factory 4" — side by side on bench. The size comparison. Vertical.','ANYTIME',true,true),
-      s('NAV TV Zen V (NTV-KIT860) — connectors visible, clean light','ANYTIME',false,true),
-      s('OBD2 dongle — the object that unlocked the car. Simple, clean.','ANYTIME',false,true),
-      s('OBD2 dongle — both ends visible in the same frame.','ANYTIME',false,true),
-      s('OBD2 dongle with laptop in frame for scale and context.','ANYTIME',false,true),
-      s('All 4 products together — organized spread, full system at a glance','ANYTIME',false,true),
-      s('Product detail shots — labels, connectors, branding, build quality. One pass per unit.','ANYTIME',false,true),
-    ]),
-
-    m('Tool Close-Ups — Bench Only','#0369A1',[
-      s('Panel removal tool — correct technique, close-up demo on avoiding cracked Audi clips','ANYTIME',false,true),
-      s('Multimeter — John demonstrates testing continuity on a wire','ANYTIME',false,true),
-      s('Laptop + Helix DSP software — tuning interface open on screen','ANYTIME',false,true),
-      s('OBD2 dongle + laptop — the coding rig. Clean bench setup.','ANYTIME',false,true),
-      s('Any other named tools from the build — one close-up per tool','ANYTIME',false,false),
-    ]),
-
-    m('How-To Clips to Camera — Annie or John, No Car Needed','#6B3FA0',[
-      s('★ SOCIAL LIFT: "If you own a 2024-or-newer Audi or VW — here\'s what SFD2 means for your audio upgrade." Annie. 30 sec. Vertical.','H',true,true),
-      s('★ SOCIAL LIFT: "Here\'s why you want your signal BEFORE the factory amp processes it." Annie. 30 sec. Vertical.','H',true,true),
-      s('★ SOCIAL LIFT: "Here\'s how you cut a clean 6x9 opening in an Audi rear shelf." John. 30 sec. Vertical.','H',true,true),
-      s('★ SOCIAL LIFT: "Here\'s how we tune 18 channels of DSP for a factory-integrated system." John. 30 sec. Vertical.','H',true,true),
-      s('NOTE: Each clip is self-contained. Hook line → demonstrate or explain → done. Shoot VERTICAL and HORIZONTAL.','H',false,false),
-    ]),
-
-    m('Pro Notes to Camera — Annie Talking to Other Pros','#6B3FA0',[
-      s('★ SOCIAL LIFT: Annie: "First SFD2 build. Here\'s what we didn\'t know going in." Peer-to-peer. Vertical.','H',true,true),
-      s('Annie: "Sam at NPG is the only person we know who cracked this" — genuine shoutout','H',true,true),
-      s('Annie: educated guesses on factory speaker sizes — what they knew vs confirmed','H',true,false),
-      s('Annie: "This isn\'t for every car" — OEM integration caveat for shops watching','H',true,false),
-      s('Annie: the broader SFD2 impact — remote starters, mirror coding, anywhere it blocks aftermarket','H',true,false),
-      s('NOTE: Pro Notes tone is peer-to-peer. Annie straight into the lens.','H',false,false),
-    ]),
-
-    m('Car Feature Segment — If RS3 Is Still Accessible','#6B3FA0',[
-      s('ONLY IF RS3 IS STILL HERE: Exterior walk-around — front corner, back corner, both sides','H',true,true),
-      s('ONLY IF RS3 IS STILL HERE: Rear shelf — Sony 6x9 grilles. Match Day 1 before angle exactly.','H',true,true),
-      s('ONLY IF RS3 IS STILL HERE: Annie to camera — one line per product, what makes this install special','H',true,true),
-    ]),
-
-    m('EOD — Annie\'s VO Recap','#E8460A',[
-      s('Annie solo — narrates what was captured in post-wrap and what the edit will need','H',false,true),
-    ]),
-  ]},
-];
+// ── DATA ──────────────────────────────────────────────────
+// No pre-filled days — blank slate for every new build
+const INIT=[];
 
 // ── STATE ─────────────────────────────────────────────────
 let days=JSON.parse(JSON.stringify(INIT));
@@ -1532,11 +762,9 @@ function moveDayUp(dayId,e){
   e.stopPropagation();
   const idx=days.findIndex(d=>d.id===dayId);
   if(idx<=0)return;
-  // Don't move past a locked anchor (num>=99 = special days) or past index 0
   const prev=days[idx-1];
   if(prev.num>=99)return;
   [days[idx-1],days[idx]]=[days[idx],days[idx-1]];
-  // Swap their num values so filenames stay consistent with visual order
   const tmpNum=days[idx-1].num;days[idx-1].num=days[idx].num;days[idx].num=tmpNum;
   saveState();render();
 }
@@ -1553,7 +781,6 @@ function moveDayDown(dayId,e){
 function requestDeleteDay(dayId,e){
   e.stopPropagation();
   if(deleteDayPending===dayId){
-    // Confirmed — log uncompleted shots to unused, then remove day
     const day=days.find(d=>d.id===dayId);if(!day)return;
     const unfinished=day.moments.flatMap(mo=>mo.shots.filter(s=>!s.done&&s.fmt!=='IN').map(s=>({...s,momentLabel:mo.label})));
     if(unfinished.length) _logUnused(unfinished,day);
@@ -1570,7 +797,7 @@ function requestDeleteDay(dayId,e){
 }
 
 // ── UNUSED LOG RESTORE ────────────────────────────────────
-let restoringShot=null; // {entryIdx, shotIdx}
+let restoringShot=null;
 function startRestore(entryIdx,shotIdx){
   restoringShot=(restoringShot&&restoringShot.entryIdx===entryIdx&&restoringShot.shotIdx===shotIdx)?null:{entryIdx,shotIdx};
   renderUnusedLog();
@@ -1583,7 +810,6 @@ function confirmRestore(entryIdx,shotIdx){
   const entry=unusedLog[entryIdx];if(!entry)return;
   const shot=entry.shots[shotIdx];if(!shot)return;
   const targetDay=days.find(d=>d.id===targetDayId);if(!targetDay)return;
-  // Find or create a "Restored Shots" moment
   let restoreMo=targetDay.moments.find(m=>m.id==='restored-'+targetDayId);
   if(!restoreMo){
     restoreMo={id:'restored-'+targetDayId,label:'Restored Shots',accent:'#4ADE80',shots:[],carried:false};
@@ -1591,16 +817,12 @@ function confirmRestore(entryIdx,shotIdx){
   }
   restoreMo.shots.push({id:uid(),text:shot.text,fmt:'H',type:shot.type||'BROLL',done:false,custom:true,social:false,essential:shot.essential!==false});
   targetDay.open=true;
-  // Remove from unused log
   entry.shots.splice(shotIdx,1);
   if(!entry.shots.length) unusedLog.splice(entryIdx,1);
   restoringShot=null;
   toast(`Shot restored to ${targetDay.name} ✓`,true);
   saveState();render();renderUnusedLog();
 }
-
-// ── PERSIST ── (Firebase REST versions defined at bottom of file)
-// saveState, saveChecklist, clearSavedState defined after Firebase init below.
 
 // ── DRAG AND DROP ─────────────────────────────────────────
 function dropShot(toMomentId,toDayId,toIndex){
@@ -1631,13 +853,20 @@ function render(){
   const wrap=document.getElementById('days-wrap');
   wrap.innerHTML='';
 
+  // Empty state
+  if(!days.length){
+    const empty=document.createElement('div');
+    empty.style.cssText='text-align:center;padding:60px 20px;color:#444;font-size:13px;line-height:1.8;';
+    empty.innerHTML='<div style="font-size:28px;margin-bottom:12px;opacity:.3">＋</div>Tap <strong style="color:#E8460A">+ Add Day</strong> to start your shot list.<br>Each day starts blank — add shots as you go.';
+    wrap.appendChild(empty);
+    return;
+  }
+
   days.forEach(day=>{
-    // Defensive guard — skip malformed days rather than crashing the whole render
     if(!day||!day.id||!day.moments||!Array.isArray(day.moments)){return;}
-    // Normalize: ensure every moment has a valid shots array — Firebase can return null/undefined
     day.moments.forEach(mo=>{
       if(!mo.shots||!Array.isArray(mo.shots))mo.shots=[];
-      mo.shots=mo.shots.filter(s=>s!=null); // strip any null entries
+      mo.shots=mo.shots.filter(s=>s!=null);
     });
     const total=day.moments.reduce((a,mo)=>a+mo.shots.length,0);
     const done=day.moments.reduce((a,mo)=>a+mo.shots.filter(s=>s.done).length,0);
@@ -1660,13 +889,11 @@ function render(){
     pf.id='day-pf-'+day.id;
     pf.style.width=pct+'%';pf.style.background=all?'#4ADE80':'#E8460A';
     pb.appendChild(pf);dp.appendChild(pb);hdr.appendChild(dp);
-    // Edit button (all days get it; locked special days get rename only)
     const editBtn=B('day-edit-btn'+(editingDayId===day.id?' active':''),'✎');
     editBtn.title='Edit day';editBtn.onclick=e=>toggleDayEdit(day.id,e);
     hdr.appendChild(editBtn);
     card.appendChild(hdr);
 
-    // Edit panel
     if(editingDayId===day.id){
       const ep=D('day-edit-panel');
       const renameRow=D('day-edit-row');
@@ -1677,8 +904,6 @@ function render(){
       const saveBtn=B('day-edit-save','Save Name');saveBtn.onclick=e=>{e.stopPropagation();saveDayName(day.id);};
       renameRow.appendChild(saveBtn);
       ep.appendChild(renameRow);
-
-      // Reorder + delete row (only for non-locked-special days)
       if(day.num<99){
         const actRow=D('day-edit-row');
         const dayIdx=days.findIndex(d=>d.id===day.id);
@@ -1697,24 +922,6 @@ function render(){
 
     const body=D('day-body'+(day.open?'':' closed'));
 
-    if(day.ingested){
-      // ── INGESTED: flat locked view — no moment headers, no controls ──
-      const allShots=day.moments.flatMap(mo=>mo.shots.filter(s=>s.fmt!=='IN'));
-      allShots.forEach(shot=>{
-        const fns=buildFn(day.num,shot.type,shot.text,shot.fmt,shot.customFn,shot.fnSlug,shot.customFns);
-        const row=D('shot-ingested');
-        row.appendChild(S('s-text done',shot.text));
-        fns.forEach(fn=>{
-          const fnRow=D('s-fn show');
-          const fnSpan=document.createElement('span');
-          fnSpan.className='fn-full';fnSpan.textContent=fn;
-          fnSpan.style.cursor='default';fnSpan.title='';
-          fnRow.appendChild(fnSpan);row.appendChild(fnRow);
-        });
-        body.appendChild(row);
-      });
-    } else {
-    // ── NORMAL: full interactive render ──
     day.moments.forEach(mo=>{
       const mw=D('moment');
       const mh=D('moment-hdr');
@@ -1753,7 +960,6 @@ function render(){
         });
 
         const handle=D('drag-handle');handle.textContent='⠿';handle.title='Drag to reorder';
-        // Only enable dragging when the handle is touched — never intercept clicks on the rest of the row
         handle.addEventListener('mousedown',()=>{row.draggable=true;});
         handle.addEventListener('touchstart',()=>{row.draggable=true;},{passive:true});
         row.appendChild(handle);
@@ -1761,16 +967,13 @@ function render(){
         const cb=B('s-check'+(shot.done?' done':''),shot.done?'✓':'');
         cb.onclick=()=>{
           shot.done=!shot.done;
-          // Surgical update — no full re-render, no flicker
           cb.className='s-check'+(shot.done?' done':'');
           cb.textContent=shot.done?'✓':'';
           st.className='s-text'+(shot.done?' done':'')+(isSug?' sug':'');
-          // Show/hide all filename rows for this shot
           fns.forEach((_,fi)=>{
             const fe=document.getElementById('fe-'+shot.id+'-'+fi);
             if(fe)fe.className='s-fn'+(shot.done?' show':'');
           });
-          // Update day progress bar
           const total2=day.moments.reduce((a,mo)=>a+mo.shots.length,0);
           const done2=day.moments.reduce((a,mo)=>a+mo.shots.filter(s=>s.done).length,0);
           const pct2=total2>0?Math.round(done2/total2*100):0;
@@ -1795,15 +998,10 @@ function render(){
           const r=document.createRange();r.selectNodeContents(st);
           const sel=window.getSelection();sel.removeAllRanges();sel.addRange(r);
         };
-        // Desktop: double-click
         st.ondblclick=e=>{e.stopPropagation();openStEdit();};
-        // Mobile: long-press (500ms)
         let _stPress=null;
         st.addEventListener('touchstart',e=>{
-          _stPress=setTimeout(()=>{
-            e.preventDefault();
-            openStEdit();
-          },500);
+          _stPress=setTimeout(()=>{e.preventDefault();openStEdit();},500);
         },{passive:true});
         st.addEventListener('touchend',()=>clearTimeout(_stPress));
         st.addEventListener('touchmove',()=>clearTimeout(_stPress));
@@ -1813,9 +1011,7 @@ function render(){
           const v=st.textContent.trim();
           if(v&&v!==shot.text){
             shot.text=v;
-            // Clear overrides so filename regenerates from new text
             delete shot.customFn;delete shot.customFns;delete shot.fnSlug;
-            // Surgical: update filename buttons in place — no render needed
             const newFns=buildFn(day.num,shot.type,v,shot.fmt,null,null,null);
             newFns.forEach((newFn,fi)=>{
               const fe=document.getElementById('fe-'+shot.id+'-'+fi);
@@ -1830,16 +1026,13 @@ function render(){
         fns.forEach((fn,fi)=>{
           const fe=D('s-fn'+(shot.done?' show':''));
           fe.id='fe-'+shot.id+'-'+fi;
-          // Wrapper holds either the copy button or the edit input
           const fnWrap=D('fn-wrap');
-
           const makeBtn=()=>{
             const btn=document.createElement('button');
             btn.className='fn-full'+(shot.done?'':' fn-pending');
             btn.type='button';btn.textContent=fn;
             btn.title='Tap to copy · Hold to rename';
             let _touchFired=false,_fnPress=null,_longPressed=false;
-
             const openFnEdit=()=>{
               _longPressed=true;
               const inp=document.createElement('input');
@@ -1849,15 +1042,12 @@ function render(){
               inp.focus();inp.select();
               const commit=()=>{
                 const raw=inp.value.trim().replace(/[^\w\-_.]/g,'-').replace(/-+/g,'-')||fn;
-                // Save to model
                 if(raw!==fn){
                   if(shot.fmt==='H+V'){if(!shot.customFns)shot.customFns={};shot.customFns[fi]=raw;}
                   else{shot.customFn=raw;}
                 }
-                // Surgical: swap input back to button with updated name — no render needed
                 fnWrap.innerHTML='';
                 const newBtn=makeBtn();
-                // Update the button text to show the committed name
                 newBtn.textContent=raw;
                 fnWrap.appendChild(newBtn);
                 saveState();
@@ -1868,18 +1058,13 @@ function render(){
                 if(e2.key==='Escape'){inp.onblur=null;render();}
               };
             };
-
-            // Mobile: long-press to edit, short tap to copy
             btn.addEventListener('touchstart',e=>{
               _longPressed=false;
-              _fnPress=setTimeout(()=>{
-                e.preventDefault();
-                openFnEdit();
-              },500);
+              _fnPress=setTimeout(()=>{e.preventDefault();openFnEdit();},500);
             },{passive:true});
             btn.addEventListener('touchend',e=>{
               clearTimeout(_fnPress);
-              if(_longPressed)return; // was a long press — don't copy
+              if(_longPressed)return;
               if(e.cancelable)e.preventDefault();
               e.stopPropagation();
               _touchFired=true;
@@ -1887,20 +1072,14 @@ function render(){
               setTimeout(()=>{_touchFired=false;},400);
             });
             btn.addEventListener('touchmove',()=>clearTimeout(_fnPress));
-
-            // Desktop: click to copy, double-click to edit
             btn.onclick=e=>{
               if(_touchFired)return;
               e.stopPropagation();
               copyT(btn.textContent);
             };
-            btn.ondblclick=e=>{
-              e.stopPropagation();
-              openFnEdit();
-            };
+            btn.ondblclick=e=>{e.stopPropagation();openFnEdit();};
             return btn;
           };
-
           fnWrap.appendChild(makeBtn());
           fe.appendChild(fnWrap);sb.appendChild(fe);
         });
@@ -1983,19 +1162,15 @@ function render(){
         rAF(()=>{refPrev();});
       }
       body.appendChild(mw);
-    }); // end day.moments.forEach
-    } // end else (normal render)
+    });
 
-    if(!day.ingested){
     const footer=D('day-footer');
     footer.appendChild(S('footer-stat',done>0?`${done} shot${done!==1?'s':''} completed`:''));
     const eb=B('eod-btn','End of Day →');eb.onclick=()=>openEOD(day.id);footer.appendChild(eb);
     body.appendChild(footer);
-    }
     card.appendChild(body);wrap.appendChild(card);
   });
 }
-// saveState is now called explicitly after data mutations — never from render()
 
 // ── ADD SHOT ──────────────────────────────────────────────
 function focusAdd(){const i=document.getElementById('add-inp');if(i){i.focus();i.value=addText;i.setSelectionRange(addText.length,addText.length);refPrev();}}
@@ -2004,7 +1179,7 @@ function refPrev(){
   const t=(document.getElementById('add-inp')||{}).value||addText;
   if(!t.trim()){p.textContent='';return;}
   const d=days.find(d=>d.moments.some(mo=>mo.id===addIn));
-  const b=(window._LIVE_BUILD&&window._LIVE_BUILD.trim())?window._LIVE_BUILD:BUILD_NAME;
+  const b=(window._LIVE_BUILD&&window._LIVE_BUILD.trim())?window._LIVE_BUILD:'BUILD';
   const base=`${b}_D${d?.num||1}_${addType}_${slug(t)}`;
   const fns=addFmt==='H+V'?[base+'_H.mp4',base+'_V.mp4']:[base+'_'+(addFmt==='ANYTIME'?'H':addFmt||'H')+'.mp4'];
   p.textContent=fns.join('  ·  ');
@@ -2021,15 +1196,14 @@ function getBuildName(){
   const y=(document.getElementById('hdr-year')||{}).value||'';
   const mk=(document.getElementById('hdr-make')||{}).value||'';
   const mo=(document.getElementById('hdr-model')||{}).value||'';
-  return[y,mk,mo].map(s=>s.trim()).filter(Boolean).join('-')||BUILD_NAME;
+  return[y,mk,mo].map(s=>s.trim()).filter(Boolean).join('-')||'';
 }
-// updateVehicle defined below with Firebase saveState
 
 // ── RESET ─────────────────────────────────────────────────
 function confirmReset(){
   const btn=document.querySelector('.hdr-reset');
   if(btn.dataset.confirm==='1'){
-    days=JSON.parse(JSON.stringify(INIT));
+    days=[];
     eodId=null;addIn=null;addText='';addType='BROLL';addFmt='H';addEss=true;showAddDay=false;movingShot=null;unusedLog=[];
     ['hdr-year','hdr-make','hdr-model'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
     window._LIVE_BUILD='';
@@ -2047,60 +1221,21 @@ function toggleAddDay(){
   document.getElementById('add-day-wrap').style.display=showAddDay?'block':'none';
   if(showAddDay)rAF(()=>document.getElementById('nd-name')?.focus());
 }
+
+// Creates a blank day with one empty "Shots" moment — no pre-filled content
 function makeStandardDay(name,num,color){
   return{id:uid(),num,open:true,locked:false,name,color,moments:[
-    m('MORNING — Morning Check-In  ★ SOCIAL','#1E5FA3',[
-      s('Annie + John — counter, both phones. What\'s the plan today?','H+V',true),
-      s('John solo — bay. "Here\'s what I\'m finishing today."','H+V',true),
-      s('Annie solo — counter. Her look-ahead.','H+V',true),
-    ]),
-    m('MORNING — Shop B-Roll','#4B5563',[
-      s('Annie at the counter — phone, walk-ins, quotes','H'),
-      s('View from the bay toward the front counter','H'),
-      s('John\'s hands working — no face needed. Clean cutaway.','H'),
-      s('Staff candid moments — natural, not directed','H'),
-    ]),
-    m('MID-MORNING — Today\'s Install Work','#1A6B5A',[
-      s('★ ANNIE TOSS → John — cue the next step','H'),
-      s('John explains step before starting','H'),
-      s('Timelapse — wide, phone mounted','H'),
-      s('SLOW DOWN: any teachable or unexpected moment','H'),
-    ]),
-    m('AFTERNOON — Afternoon Check-In  ★ SOCIAL','#1E5FA3',[
-      s('Annie + John — where are we vs. the plan. Honest.','H+V',true),
-    ]),
-    m('EOD ★ — How-To Tips  SOCIAL','#6B3FA0',[
-      s('Setup to camera: "Here\'s something most people get wrong..."','H+V',true),
-      s('John demonstrates — hands close-up','H+V',true),
-      s('Before and after in the same clip','H+V',true),
-    ]),
-    m('EOD ★ — Pro Notes  SOCIAL','#6B3FA0',[
-      s('John to camera — one specific thing learned on this build today','H+V',true),
-    ]),
-    m('EOD ★ — Day Recap  SOCIAL','#1E5FA3',[
-      s('Annie + John — counter, both phones. Wins, losses, what\'s next.','H+V',true),
-      s('John solo — bay. One honest win and one honest loss.','H+V',true),
-      s('Annie solo — counter. Her take.','H+V',true),
-    ]),
-    m('EOD — Annie\'s VO Recap','#E8460A',[
-      s('Annie solo — narrates the day in order. Products named. Look ahead.','H'),
-    ]),
-    m('ANYTIME — Grab Before Car Leaves','#0369A1',[
-      s('Tool close-ups — bench only','ANYTIME'),
-      s('Product detail — connectors, labels, branding','ANYTIME'),
-      s('Shop life','ANYTIME'),
-    ]),
+    {id:uid(),label:'Shots',accent:'#555',shots:[],carried:false}
   ]};
 }
+
 function confirmAddDay(){
   const name=document.getElementById('nd-name').value.trim();if(!name)return;
   const installDays=days.filter(d=>!d.locked);
-  const nextNum=installDays.length>0?Math.max(...installDays.map(d=>d.num))+1:2;
-  const COLS=['#1B4332','#1C3A5E','#3B1E08','#1E3A1E','#2D1B4E','#1A3A2A'];
+  const nextNum=installDays.length>0?Math.max(...installDays.map(d=>d.num))+1:1;
+  const COLS=['#1B3A5E','#1B4332','#3B1E08','#1E3A1E','#2D1B4E','#1A3A2A','#3B1E1E','#1A2A3A'];
   const newDay=makeStandardDay(name,nextNum,COLS[(installDays.length)%COLS.length]);
-  const insertIdx=days.findIndex(d=>d.locked&&d.id!=='d1');
-  if(insertIdx>=0) days.splice(insertIdx,0,newDay);
-  else days.push(newDay);
+  days.push(newDay);
   document.getElementById('nd-name').value='';
   showAddDay=false;saveState();render();
 }
@@ -2110,7 +1245,7 @@ function copyCarriedForAI(){
   const day=days.find(d=>d.id===eodId);if(!day)return;
   const allCtx=day.moments.flatMap(mo=>mo.shots.map(s=>({...s,momentLabel:mo.label})));
   const miss=allCtx.filter(s=>!s.done&&s.fmt!=='IN');
-  const b=window._LIVE_BUILD||BUILD_NAME;
+  const b=window._LIVE_BUILD||'BUILD';
   let txt=`SHOTS CARRYING TO NEXT DAY — ${b} / ${day.name}\n${'─'.repeat(48)}\n\n`;
   if(!miss.length){txt+='All shots completed — nothing to carry.\n';}
   else{
@@ -2171,8 +1306,6 @@ function openEOD(dayId){
   document.getElementById('eod-bg').classList.remove('off');
 }
 function closeEOD(){
-  // If pendingMiss is non-empty here, Send was already clicked and shots were
-  // stripped from the day. Log them to unused before dropping them.
   if(pendingMiss.length){
     _logUnused(pendingMiss);
     toast(`${pendingMiss.length} shot${pendingMiss.length!==1?'s':''} logged as unused`,false);
@@ -2204,11 +1337,9 @@ document.getElementById('eod-send-btn').addEventListener('click',async()=>{
   const note=document.getElementById('eod-note').value.trim();
   const btn=document.getElementById('eod-send-btn'),st=document.getElementById('eod-st');
   btn.disabled=true;btn.textContent='Sending...';
-  const body=new URLSearchParams({form_type:'build_log',vehicle:window._LIVE_BUILD||BUILD_NAME,shoot_day:String(day.num),completed:doneLog.join('\n'),missed:missLog.join('\n'),note});
+  const body=new URLSearchParams({form_type:'build_log',vehicle:window._LIVE_BUILD||'',shoot_day:String(day.num),completed:doneLog.join('\n'),missed:missLog.join('\n'),note});
   try{
     if(APPS_SCRIPT_URL!=='APPS_SCRIPT_URL_HERE') await fetch(APPS_SCRIPT_URL,{method:'POST',body});
-    // NOTE: unusedLog is populated AFTER the carry decision (in confirmNextDay / goToPickup)
-    // NOT here — logging here would cause double-entries for any shot the user chooses not to carry
     pendingMiss=miss.map(s=>({...s,keep:true}));
     day.moments.forEach(mo=>{mo.shots=(mo.shots||[]).filter(s=>s&&(s.done||s.fmt==='IN'));});
     toast(`${done.length} shots logged ✓`,true);
@@ -2226,9 +1357,6 @@ function _buildPhase2(){
   container.innerHTML='';
   const currentDay=days.find(d=>d.id===eodId);
   const currentNum=currentDay?.num||0;
-  const isReveal=currentDay?.id==='d-reveal';
-  const isPickup=currentDay?.id==='d-pickup';
-  const isPostWrap=currentDay?.id==='d-postwrap';
 
   function addBtn(icon,label,sub,fn){
     const b=document.createElement('button');b.className='eod-next-btn';
@@ -2236,73 +1364,23 @@ function _buildPhase2(){
     b.onclick=fn;container.appendChild(b);
   }
 
-  // ── Post-Wrap: just close, no flow ──
-  if(isPostWrap){
-    addBtn('✓','All Done','Build complete. Close this out.',()=>{_ingestDay();closeEOD();});
-    return;
-  }
-
-  // ── Pickup: open Post-Wrap, no carry ──
-  if(isPickup){
-    addBtn('✓','All Done — Move to Post-Wrap','Wrap it up. Post-Wrap is next.',()=>{
-      const pw=days.find(d=>d.id==='d-postwrap');
-      if(pw)pw.open=true;
-      _ingestDay();saveState();closeEOD();
-    });
-    return;
-  }
-
-  // ── Reveal: log ALL unused shots to unused log, navigate to Pickup — no carry UI ──
-  if(isReveal){
-    addBtn('→','Move to Pickup Day','Unused shots from Reveal are logged. Pickup is next.',()=>{
-      // Log all pendingMiss to unused log — no carry from Reveal to Pickup ever
-      if(pendingMiss.length){
-        const fromDay=days.find(d=>d.id===eodId);
-        const dayName=fromDay?.name||'Reveal Day';const dayNum=fromDay?.num||99;
-        const existing=unusedLog.find(u=>u.dayNum===dayNum);
-        const logShots=pendingMiss.map(s=>({text:s.text,type:s.type||'BROLL',essential:s.essential,momentLabel:s.momentLabel}));
-        if(existing){logShots.forEach(s=>existing.shots.push(s));}
-        else{unusedLog.push({dayName,dayNum,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'}),shots:logShots});}
-      }
-      pendingMiss=[];
-      const pickup=days.find(d=>d.id==='d-pickup');
-      if(pickup)pickup.open=true;
-      _ingestDay();saveState();closeEOD();
-    });
-    addBtn('✓','Done — No Pickup Needed','Close out the build.',()=>{
-      // Still log unused shots even if skipping Pickup
-      if(pendingMiss.length){
-        const fromDay=days.find(d=>d.id===eodId);
-        const dayName=fromDay?.name||'Reveal Day';const dayNum=fromDay?.num||99;
-        const existing=unusedLog.find(u=>u.dayNum===dayNum);
-        const logShots=pendingMiss.map(s=>({text:s.text,type:s.type||'BROLL',essential:s.essential,momentLabel:s.momentLabel}));
-        if(existing){logShots.forEach(s=>existing.shots.push(s));}
-        else{unusedLog.push({dayName,dayNum,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'}),shots:logShots});}
-      }
-      pendingMiss=[];_ingestDay();closeEOD();
-    });
-    return;
-  }
-
-  // ── Install days: find next existing or offer to create ──
   const nextExisting=days.find(d=>!d.locked&&d.num>currentNum&&d.num<99);
-
   if(nextExisting){
     addBtn('→',`Continue to ${nextExisting.name}`,
       pendingMiss.length?`Carry ${pendingMiss.length} unfinished shot${pendingMiss.length!==1?'s':''} forward`:'All shots done — move to next day',
       ()=>startCarryToDay(nextExisting.id));
-    addBtn('✦','Skip to Reveal','Done early — decide what goes to Pickup.',goToPickup);
-  } else {
-    addBtn('＋','Add Another Shoot Day','Creates a new day and carries over what\'s left.',startNextDay);
-    addBtn('→','Move to Reveal','Done installing — decide what goes to Pickup.',goToPickup);
   }
+  addBtn('＋','Add Another Shoot Day','Creates a new day and carries over what\'s left.',startNextDay);
+  addBtn('✓','Done for This Build','Log unused shots and wrap up.',()=>{
+    if(pendingMiss.length){_logUnused(pendingMiss);pendingMiss=[];}
+    _ingestDay();closeEOD();
+  });
 }
 
 function startCarryToDay(targetDayId){
-  // Carry shots to an EXISTING day (no new day created)
   window._carryTarget=targetDayId;
   const targetDay=days.find(d=>d.id===targetDayId);
-  document.getElementById('eod-phase3-title').textContent='Carry to '+( targetDay?.name||'Next Day');
+  document.getElementById('eod-phase3-title').textContent='Carry to '+(targetDay?.name||'Next Day');
   document.getElementById('eod-nd-name-row').style.display='none';
   document.getElementById('eod-phase3-confirm-btn').textContent='Move Shots →';
   _buildCarryList();
@@ -2310,7 +1388,6 @@ function startCarryToDay(targetDayId){
 }
 
 function startNextDay(){
-  // Create a BRAND NEW day
   window._carryTarget=null;
   const installDays=days.filter(d=>!d.locked);
   const nextNum=installDays.length>0?Math.max(...installDays.map(d=>d.num))+1:2;
@@ -2341,50 +1418,6 @@ function _buildCarryList(){
   });
 }
 
-function goToPickup(){
-  const list=document.getElementById('eod-pickup-list');list.innerHTML='';
-  if(!pendingMiss.length){closeEOD();return;}
-  pendingMiss.forEach(item=>item.addToReveal=false);
-  pendingMiss.forEach(item=>{
-    const li=document.createElement('li');li.className='eod-carry-item';
-    const tog=D('eod-carry-toggle');tog.textContent='';
-    const bod=D('eod-carry-item-body');
-    const pb=document.createElement('span');pb.className='eod-pri-badge '+(item.essential===false?'eod-pri-nice':'eod-pri-need');pb.textContent=item.essential===false?'◌ NICE':'● NEED';
-    const tx=document.createElement('span');tx.className='eod-carry-item-text';tx.textContent=' '+item.text;
-    bod.appendChild(pb);bod.appendChild(tx);
-    li.appendChild(tog);li.appendChild(bod);
-    li.onclick=()=>{item.addToReveal=!item.addToReveal;tog.classList.toggle('on',item.addToReveal);tog.textContent=item.addToReveal?'✓':'';li.classList.toggle('selected',item.addToReveal);};
-    list.appendChild(li);
-  });
-  showEODPhase(4);
-}
-
-function confirmPickupCarry(){
-  const toPickup=pendingMiss.filter(s=>s.addToReveal);
-  const toLog=pendingMiss.filter(s=>!s.addToReveal);
-  if(toLog.length){
-    const fromDay=days.find(d=>d.id===eodId);
-    const dayName=fromDay?.name||'Previous Day';const dayNum=fromDay?.num||0;
-    const existing=unusedLog.find(u=>u.dayNum===dayNum&&u.dayName===dayName);
-    const logShots=toLog.map(s=>({text:s.text,type:s.type||'BROLL',essential:s.essential,momentLabel:s.momentLabel}));
-    if(existing){logShots.forEach(s=>existing.shots.push(s));}
-    else{unusedLog.push({dayName,dayNum,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'}),shots:logShots});}
-  }
-  if(toPickup.length){
-    const pickup=days.find(d=>d.id==='d-pickup');
-    if(pickup){
-      let cf=pickup.moments.find(m=>m.carried);
-      if(!cf){cf={id:'cf-pickup',label:'Carried Forward — Grab If You Can',accent:'#7C3AED',shots:[],carried:true};pickup.moments.unshift(cf);}
-      toPickup.forEach(s=>cf.shots.push({...s,id:uid(),done:false}));
-      pickup.open=true;
-    }
-  }
-  pendingMiss=[];_ingestDay();closeEOD();
-  const msg=(toPickup.length?`${toPickup.length} shot${toPickup.length!==1?'s':''} added to Pickup`:'')+
-            (toLog.length?` · ${toLog.length} logged as unused`:'');
-  if(msg.trim())toast(msg.trim(),true);
-}
-
 function _logUnused(shots,explicitDay){
   if(!shots||!shots.length)return;
   const fromDay=explicitDay||(days.find(d=>d.id===eodId));
@@ -2399,12 +1432,9 @@ function _logUnused(shots,explicitDay){
 function confirmNextDay(){
   const kept=pendingMiss.filter(s=>s.keep);
   const notKept=pendingMiss.filter(s=>!s.keep);
-
-  // Shots toggled OFF always go to unused log
   _logUnused(notKept);
 
   if(window._carryTarget){
-    // Carry kept shots to an existing day
     const targetDay=days.find(d=>d.id===window._carryTarget);
     window._carryTarget=null;
     if(targetDay&&kept.length){
@@ -2424,19 +1454,16 @@ function confirmNextDay(){
     return;
   }
 
-  // Create a brand new day
   const name=document.getElementById('eod-nd-name').value.trim()||'Next Day';
   const installDays=days.filter(d=>!d.locked);
   const nextNum=installDays.length>0?Math.max(...installDays.map(d=>d.num))+1:2;
-  const COLS=['#1B4332','#1C3A5E','#3B1E08','#1E3A1E','#2D1B4E','#1A3A2A'];
+  const COLS=['#1B3A5E','#1B4332','#3B1E08','#1E3A1E','#2D1B4E','#1A3A2A','#3B1E1E','#1A2A3A'];
   const newDay=makeStandardDay(name,nextNum,COLS[(installDays.length)%COLS.length]);
   if(kept.length){
     const cfMoment={id:uid(),label:'Carried Forward from Previous Day',accent:'#7C3AED',shots:kept.map(s=>({...s,id:uid(),done:false})),carried:true};
-    newDay.moments.splice(2,0,cfMoment);
+    newDay.moments.unshift(cfMoment);
   }
-  const insertIdx=days.findIndex(d=>d.locked&&d.num>=99);
-  if(insertIdx>=0)days.splice(insertIdx,0,newDay);
-  else days.push(newDay);
+  days.push(newDay);
   pendingMiss=[];_ingestDay();closeEOD();
   const msgs=[];
   if(kept.length)msgs.push(`"${name}" created · ${kept.length} shot${kept.length!==1?'s':''} carried`);
@@ -2447,14 +1474,14 @@ function confirmNextDay(){
 
 // ── EXPORT ────────────────────────────────────────────────
 function buildExportData(){
-  const build=window._LIVE_BUILD||BUILD_NAME;
+  const build=window._LIVE_BUILD||'BUILD';
   const date=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
   const dateShort=new Date().toISOString().slice(0,10);
   const rows=[];
   days.forEach(day=>{
     const allShots=day.moments.flatMap(mo=>mo.shots);
     const done=allShots.filter(s=>s.done).length;
-    const dayLabel=day.num===99?'Reveal':day.num===100?'Pickup':day.num===101?'Post-Wrap':'Day '+day.num;
+    const dayLabel='Day '+day.num;
     rows.push({type:'day',label:dayLabel,name:day.name,done,total:allShots.length,color:day.color});
     day.moments.forEach(mo=>{
       const vis=mo.shots.filter(s=>s.fmt!=='IN');
@@ -2496,7 +1523,7 @@ function exportAsWord(){
 <p style="font-family:Arial,sans-serif;font-size:8pt;color:#999;margin-bottom:16pt;">Car Stereo Chick · Sounds Incredible Mobile · Exported ${date}</p>
 ${body}
 </body></html>`;
-  const fname=`${build}_shot-list_${dateShort}.doc`;
+  const fname=`${build||'shot-list'}_${dateShort}.doc`;
   const blob=new Blob(['\ufeff'+doc],{type:'application/msword'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fname;
   document.body.appendChild(a);a.click();document.body.removeChild(a);
@@ -2524,12 +1551,10 @@ function renderUnusedLog(){
       const tx=D('unused-shot-text');tx.textContent=shot.text;
       const ml=D('unused-moment-label');ml.textContent=shot.momentLabel||'';
       tx.appendChild(ml);row.appendChild(pb);row.appendChild(tb);row.appendChild(tx);
-      // Restore button
       const rb=B('unused-restore-btn','↩ Restore');
       rb.onclick=()=>startRestore(entryIdx,shotIdx);
       row.appendChild(rb);
       block.appendChild(row);
-      // Restore panel (inline, shown when this shot is being restored)
       const isRestoring=restoringShot&&restoringShot.entryIdx===entryIdx&&restoringShot.shotIdx===shotIdx;
       if(isRestoring){
         const panel=D('unused-restore-panel');
@@ -2571,7 +1596,7 @@ function copyUnusedLog(){
 }
 function exportUnusedLog(){
   if(!unusedLog.length){toast('No unused shots to export yet');return;}
-  const b=window._LIVE_BUILD||BUILD_NAME;
+  const b=window._LIVE_BUILD||'BUILD';
   let txt=`UNUSED SHOT LOG — ${b}\nGenerated: ${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})}\n${'═'.repeat(52)}\n\n`;
   unusedLog.forEach(entry=>{
     txt+=`${entry.dayName.toUpperCase()} · ${entry.date}\n${'─'.repeat(40)}\n`;
@@ -2616,7 +1641,7 @@ const clStepLabels={
   'cl-step1':'Morning Chat with John (H + V)',
   'cl-step2':'Afternoon Check-In',
   'cl-step3':'End of Day Recap with John (H + V)',
-  'cl-step4':"Annie's VO Recap",
+  'cl-step4':'Your VO Recap',
   'cl-step5':'Name + Upload All Footage',
 };
 function clToggleStep(id){document.getElementById(id).classList.toggle('done');saveChecklist();}
@@ -2638,7 +1663,7 @@ function clBuildPreview(p){
   let t=`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nBUILD LOG — ${p.vehicle} · ${p.day}\n${now}\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
   t+=`COMPLETED\n${p.completed?p.completed.split(' · ').map(s=>`  ✓ ${s}`).join('\n'):'  — None marked complete'}\n`;
   t+=`\nMISSED\n${p.missed?p.missed.split(' · ').map(s=>`  ✗ ${s}`).join('\n'):'  — Everything complete'}\n`;
-  t+=`\nANNIE'S NOTE\n  ${p.note||'— No note left'}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+  t+=`\nYOUR NOTE\n  ${p.note||'— No note left'}\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
   return t;
 }
 async function clSendToSheet(){
@@ -2681,12 +1706,11 @@ function clResetDay(){
   document.getElementById('cl-sendBtn').disabled=false;
   document.getElementById('cl-sendBtn').textContent='Send Day to Sheet →';
   document.querySelectorAll('#pane-check .step-card').forEach(c=>c.classList.remove('done','open'));
-  // Only clear checklist — NEVER touch the shot list state
   fetch(FB_CL,{method:'DELETE'}).catch(()=>{});
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ── FIREBASE REST — NO EXTERNAL SCRIPTS ───────────────────
+// ── FIREBASE REST ─────────────────────────────────────────
 const FB_BASE    = 'https://shot-list-intake-default-rtdb.firebaseio.com';
 const FB_STATE   = FB_BASE + '/shotlist/state.json';
 const FB_CL      = FB_BASE + '/shotlist/checklist.json';
@@ -2701,10 +1725,6 @@ function _setSyncDot(s){
 }
 
 function _getSnapshot(){
-  // NOTE: eodId, eodPhase, pendingMiss, carryTarget are intentionally excluded.
-  // These are ephemeral per-device UI states. Saving them to Firebase causes other
-  // devices to receive and try to restore EOD flow state that belongs to a different device.
-  // Deep-copy days so any in-flight mutations during the 400ms debounce don't corrupt the snapshot.
   return{days:JSON.parse(JSON.stringify(days)),unusedLog,showAddDay,
     build:window._LIVE_BUILD||'',
     hdr:{year:(document.getElementById('hdr-year')||{}).value||'',
@@ -2713,15 +1733,15 @@ function _getSnapshot(){
     _clientId,_ts:Date.now()};
 }
 
-let _suppressUntil = 0; // suppress SSE re-renders briefly after our own writes
+let _suppressUntil = 0;
 
 function saveState(){
   clearTimeout(_fbSaveTimer);_setSyncDot('saving');
   const ts=Date.now();
-  _lastSeenTs=ts; // stamp immediately so SSE echo of this write is ignored
-  _suppressUntil=ts+2000; // suppress any SSE re-render for 2s after our write
+  _lastSeenTs=ts;
+  _suppressUntil=ts+2000;
   _fbSaveTimer=setTimeout(()=>{
-    const snap=_getSnapshot();snap._ts=ts; // use the same ts we already stamped
+    const snap=_getSnapshot();snap._ts=ts;
     fetch(FB_STATE,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(snap)})
       .then(()=>_setSyncDot('saved')).catch(()=>_setSyncDot(''));
   },400);
@@ -2739,21 +1759,15 @@ function saveChecklist(){
 }
 
 function clearSavedState(){
-  // Write a clean reset marker instead of DELETE — DELETE causes other devices'
-  // SSE streams to close/reopen and can leave them in a broken state
-  const resetSnap={days:JSON.parse(JSON.stringify(INIT)),unusedLog:[],_ts:Date.now(),_clientId,_reset:true};
+  const resetSnap={days:[],unusedLog:[],_ts:Date.now(),_clientId,_reset:true};
   fetch(FB_STATE,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(resetSnap)}).catch(()=>{});
   fetch(FB_CL,{method:'DELETE'}).catch(()=>{});
 }
 
 function updateVehicle(){window._LIVE_BUILD=getBuildName();saveState();}
 
-// Mobile Safari SSE recovery — when app comes back from background the SSE
-// is silently dead. Detect page becoming visible again and reconnect + fetch.
 document.addEventListener('visibilitychange',()=>{
-  if(document.visibilityState==='visible'&&_fbReady){
-    _startSSE(); // reconnect SSE (open event will fetch current state)
-  }
+  if(document.visibilityState==='visible'&&_fbReady){_startSSE();}
 });
 
 window.addEventListener('beforeunload',()=>{
@@ -2763,48 +1777,27 @@ window.addEventListener('beforeunload',()=>{
 
 function _applyState(s, fromSSE){
   if(fromSSE){
-    // SSE update from another device: merge carefully
-    // Guard: if the incoming data has no valid days array, ignore it entirely
-    // rather than wiping the screen
-    if(!s.days||!Array.isArray(s.days)||s.days.length===0){
-      toast('Sync update received (no day data)',false);
-      return;
-    }
-    // 1. Snapshot which days are open on THIS device right now
+    if(!s.days||!Array.isArray(s.days)){return;}
     const localOpen={};
     days.forEach(d=>{localOpen[d.id]=d.open;});
-    // 2. Apply incoming shot/log data
     days=s.days;
     if(s.unusedLog)unusedLog=s.unusedLog;
     if(s.build)window._LIVE_BUILD=s.build;
-    // 2b. Normalize all moments — Firebase can return shots:null or shots:undefined
     days.forEach(d=>{
       if(!d.moments||!Array.isArray(d.moments))d.moments=[];
       d.moments.forEach(mo=>{if(!mo.shots||!Array.isArray(mo.shots))mo.shots=[];mo.shots=mo.shots.filter(s=>s!=null);});
     });
-    // 3. Restore this device's open states so nothing collapses
     days.forEach(d=>{if(d.id in localOpen)d.open=localOpen[d.id];});
-    // 4. Merge any INIT days that are missing
-    const savedIds=new Set(days.map(d=>d.id));
-    INIT.forEach(id=>{if(!savedIds.has(id.id)){const at=days.findIndex(d=>d.num>id.num);if(at>=0)days.splice(at,0,JSON.parse(JSON.stringify(id)));else days.push(JSON.parse(JSON.stringify(id)));}});
-    days.sort((a,b)=>a.num-b.num);
-    render();
-    return;
+    render();return;
   }
-  // ── Page load / refresh path ──
   if(s.days)days=s.days;
   if(s.unusedLog)unusedLog=s.unusedLog;
   if(typeof s.showAddDay==='boolean')showAddDay=s.showAddDay;
   if(s.build)window._LIVE_BUILD=s.build;
-  // Normalize all moments — Firebase can return shots:null or shots:undefined
   days.forEach(d=>{
     if(!d.moments||!Array.isArray(d.moments))d.moments=[];
     d.moments.forEach(mo=>{if(!mo.shots||!Array.isArray(mo.shots))mo.shots=[];mo.shots=mo.shots.filter(s=>s!=null);});
   });
-  // eodId, eodPhase, pendingMiss, carryTarget no longer saved to Firebase
-  const savedIds=new Set(days.map(d=>d.id));
-  INIT.forEach(id=>{if(!savedIds.has(id.id)){const at=days.findIndex(d=>d.num>id.num);if(at>=0)days.splice(at,0,JSON.parse(JSON.stringify(id)));else days.push(JSON.parse(JSON.stringify(id)));}});
-  days.sort((a,b)=>a.num-b.num);
   render();
   if(s.hdr){requestAnimationFrame(()=>{
     if(s.hdr.year){const el=document.getElementById('hdr-year');if(el)el.value=s.hdr.year;}
@@ -2820,7 +1813,6 @@ function _hideLoader(){
 
 let _sseRetryDelay=3000;
 function _fetchAndApply(){
-  // Pull current state directly from Firebase — used on SSE reconnect
   fetch(FB_STATE).then(r=>r.json()).then(s=>{
     if(!s||!_fbReady)return;
     if(s._clientId===_clientId)return;
@@ -2835,25 +1827,20 @@ function _startSSE(){
     try{
       const msg=JSON.parse(e.data);const s=msg.data;
       if(!s||!_fbReady)return;
-      if(s._clientId===_clientId)return; // our own write echoed back
-      if(Date.now()<_suppressUntil)return; // suppress window active
+      if(s._clientId===_clientId)return;
+      if(Date.now()<_suppressUntil)return;
       if(s._ts&&s._ts<=_lastSeenTs)return;
       _lastSeenTs=s._ts||0;
-      _sseRetryDelay=3000; // reset backoff on successful message
-
-      // If another device hit Reset, apply it cleanly here too
+      _sseRetryDelay=3000;
       if(s._reset){
-        days=JSON.parse(JSON.stringify(INIT));
-        unusedLog=[];eodId=null;pendingMiss=[];
-        render();toast('Shot list was reset on another device',false);
-        return;
+        days=[];unusedLog=[];eodId=null;pendingMiss=[];
+        render();toast('Shot list was reset on another device',false);return;
       }
       _applyState(s,true);toast('Shot list updated ✓',true);
     }catch(err){console.error('SSE apply error:',err);}
   });
   _sseState.addEventListener('open',()=>{
     _sseRetryDelay=3000;
-    // Only fetch on reconnect — boot fetch already handles the initial load
     if(_sseEverConnected)_fetchAndApply();
     _sseEverConnected=true;
   });
@@ -2861,7 +1848,7 @@ function _startSSE(){
     if(!_fbReady)return;
     clearTimeout(_sseRetryTimer);
     _sseRetryTimer=setTimeout(()=>{
-      _sseRetryDelay=Math.min(_sseRetryDelay*2,30000); // exponential backoff up to 30s
+      _sseRetryDelay=Math.min(_sseRetryDelay*2,30000);
       _startSSE();
     },_sseRetryDelay);
   };
@@ -2881,19 +1868,23 @@ function _startSSE(){
   });
 }
 
-// ── BOOT ── all functions defined, safe to run ─────────────
-window._LIVE_BUILD='2026-Audi-RS3';
-render(); // show INIT data immediately — render no longer writes to Firebase
+// ── BOOT ──────────────────────────────────────────────────
+window._LIVE_BUILD='';
+render();
 
-// Guaranteed loader removal — no matter what happens, loader comes down after 6s
 setTimeout(()=>{_fbReady=true;_hideLoader();},6000);
 
 fetch(FB_STATE)
   .then(r=>r.json())
   .then(s=>{
     _fbReady=true;_hideLoader();
-    if(!s){updateVehicle();}
-    else{_lastSeenTs=s._ts||0;_applyState(s);toast('Progress restored ✓',true);}
+    if(!s||s._reset){
+      // Fresh start — no saved state
+      render();
+    } else {
+      _lastSeenTs=s._ts||0;_applyState(s);
+      if(s.days&&s.days.length) toast('Progress restored ✓',true);
+    }
     _startSSE();
   })
   .catch(()=>{_fbReady=true;_hideLoader();_startSSE();toast('⚠ Cloud sync unavailable — working offline',false);});
